@@ -1174,11 +1174,11 @@
       <div class="radar-card" style="position: static;">
         <div class="radar-header">
           <h3 class="radar-title" id="radar-title">Taekwondo · profile</h3>
-          <div class="radar-subtitle">All 16 dimensions, 1–5 scale</div>
+          <div class="radar-subtitle">Six bundled categories, 1–5 scale</div>
         </div>
         <div class="radar-controls" id="radar-controls"></div>
         <div class="radar-svg-wrap" id="radar-svg-wrap"></div>
-        <div class="radar-legend-text">Each axis is a dimension from the matrix above. Further from center = higher score.</div>
+        <div class="radar-legend-text">Some axes bundle matrix dimensions: <strong>Striking</strong> = best of hand / kick / knee &amp; elbow; <strong>Grappling</strong> = best of standing / ground. (Specialists shouldn't be penalized for not doing every flavor.) Further from center = higher score.</div>
         <div id="comparison-summary" class="comparison-summary"></div>
       </div>
     </div>
@@ -2190,6 +2190,19 @@ const dimensions = [
     rubric: [['1','None'],['2','Symbolic only'],['3','Basic forms or drills'],['4','Sparred with gear'],['5','Central to the art']] },
 ];
 
+// Radar uses bundled categories (not the full 16) so the chart is readable.
+// Each compute() reads from `cells[artKey]`, returning a 1-5 score.
+const dimIdx = Object.fromEntries(dimensions.map((d, i) => [d.key, i]));
+function dimVal(artKey, dimKey){ return cells[artKey][dimIdx[dimKey]][0]; }
+const radarAxes = [
+  { label: 'Striking',     compute: a => Math.max(dimVal(a,'hand'), dimVal(a,'kick'), dimVal(a,'knee_elbow')) },
+  { label: 'Grappling',    compute: a => Math.max(dimVal(a,'standing'), dimVal(a,'ground')) },
+  { label: 'Sport',        compute: a => dimVal(a,'sport') },
+  { label: 'Self-defense', compute: a => dimVal(a,'self_defense') },
+  { label: 'Lethality',    compute: a => dimVal(a,'lethality') },
+  { label: 'Tradition',    compute: a => dimVal(a,'art') },
+];
+
 const cells = {
   'Taekwondo':  [[2,'H'],[5,'H'],[1,'H'],[1,'H'],[1,'H'],[3,'H'],[4,'M'],[3,'M'],[3,'H'],[2,'M'],[5,'H'],[5,'H'],[4,'M'],[3,'M'],[3,'M'],[1,'H','tkd-weapons']],
   'Karate':     [[4,'H'],[3,'H'],[2,'M'],[1,'H'],[1,'H'],[3,'M'],[3,'M'],[4,'M'],[3,'H'],[2,'M'],[4,'H'],[5,'H'],[3,'M'],[3,'M'],[3,'M'],[2,'M','karate-weapons']],
@@ -2436,8 +2449,8 @@ function hideTooltip() { tooltip.style.opacity = '0'; }
 function buildRadar() {
   const radarSize = 440;
   const cx = radarSize / 2, cy = radarSize / 2;
-  const radius = 145;
-  const n = dimensions.length;
+  const radius = 130;
+  const n = radarAxes.length;
   const angle = (i) => -Math.PI/2 + (2 * Math.PI * i) / n;
 
   let gridSvg = '';
@@ -2459,7 +2472,7 @@ function buildRadar() {
     let pts = [];
     for (let i = 0; i < n; i++) {
       const a = angle(i);
-      const v = cells[artKey][i][0];
+      const v = radarAxes[i].compute(artKey);
       const rr = (v / 5) * radius;
       pts.push(`${cx + Math.cos(a)*rr},${cy + Math.sin(a)*rr}`);
     }
@@ -2469,11 +2482,11 @@ function buildRadar() {
   let labels = '';
   for (let i = 0; i < n; i++) {
     const a = angle(i);
-    const lr = radius + 18;
+    const lr = radius + 24;
     const lx = cx + Math.cos(a) * lr;
     const ly = cy + Math.sin(a) * lr;
     const anchor = Math.cos(a) > 0.3 ? 'start' : Math.cos(a) < -0.3 ? 'end' : 'middle';
-    labels += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle" font-size="10" fill="var(--text-3)" font-weight="600">${dimensions[i].num}</text>`;
+    labels += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle" font-size="13" fill="var(--text-2)" font-weight="600">${radarAxes[i].label}</text>`;
   }
 
   let polygons = '';
