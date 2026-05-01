@@ -1,0 +1,2936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparing martial arts: a calibrated heatmap</title>
+<style>
+  :root {
+    --bg: #fcfbf7;
+    --surface: #ffffff;
+    --surface-2: #f4f2eb;
+    --border: rgba(0,0,0,0.12);
+    --border-strong: rgba(0,0,0,0.22);
+    --rule: rgba(0,0,0,0.85);
+    --text: #1a1a1a;
+    --text-2: #444;
+    --text-3: #777;
+    --text-4: #999;
+    --accent: #185FA5;
+    --accent-bg: #E6F1FB;
+    --accent-text: #0C447C;
+    --accent-2: #D85A30;
+    --accent-2-bg: #FAECE7;
+    --accent-2-text: #993C1D;
+    --highlight: #FAEEDA;
+    --highlight-text: #633806;
+    --font-serif: "Charter", "Iowan Old Style", "Georgia", "Times New Roman", serif;
+    --font-sans: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    --font-mono: "SF Mono", "Menlo", "Consolas", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a1a;
+      --surface: #232323;
+      --surface-2: #2c2c2a;
+      --border: rgba(255,255,255,0.12);
+      --border-strong: rgba(255,255,255,0.22);
+      --rule: rgba(255,255,255,0.85);
+      --text: #f0f0f0;
+      --text-2: #c0c0c0;
+      --text-3: #999;
+      --text-4: #777;
+      --accent: #85B7EB;
+      --accent-bg: #042C53;
+      --accent-text: #B5D4F4;
+      --accent-2: #F0997B;
+      --accent-2-bg: #4A1B0C;
+      --accent-2-text: #F5C4B3;
+      --highlight: #412402;
+      --highlight-text: #FAC775;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  .page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 56px 32px 96px;
+  }
+  .wide { max-width: 1600px; margin: 0 auto; padding: 0 32px; }
+
+  .kicker {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: var(--font-serif);
+    font-size: 48px;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin: 0 0 16px;
+    max-width: 900px;
+  }
+  .deck {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-style: italic;
+    color: var(--text-2);
+    line-height: 1.5;
+    margin: 0 0 24px;
+    max-width: 800px;
+  }
+  .byline {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--text-3);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+    margin-bottom: 48px;
+  }
+  h2 {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 64px 0 8px;
+    line-height: 1.2;
+  }
+  .section-deck {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    color: var(--text-2);
+    font-style: italic;
+    margin: 0 0 32px;
+    max-width: 700px;
+  }
+  h3 {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-2);
+    margin: 32px 0 12px;
+  }
+  p { margin: 0 0 18px; }
+  .lede::first-letter {
+    font-family: var(--font-serif);
+    font-size: 64px;
+    font-weight: 500;
+    float: left;
+    line-height: 0.85;
+    margin: 8px 8px 0 0;
+    color: var(--text);
+  }
+
+  /* Featured-art block at top */
+  .featured {
+    border-top: 2px solid var(--rule);
+    border-bottom: 2px solid var(--rule);
+    padding: 32px 0;
+    margin: 48px 0;
+    background: var(--surface);
+  }
+  .featured-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 48px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  @media (max-width: 900px) { .featured-grid { grid-template-columns: 1fr; } }
+  .featured-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: flex-end;
+    margin-bottom: 24px;
+  }
+  .featured-kicker {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .featured-title {
+    font-family: var(--font-serif);
+    font-size: 42px;
+    font-weight: 500;
+    margin: 0 0 4px;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+  }
+  .featured-origin {
+    font-family: var(--font-serif);
+    color: var(--text-2);
+    font-style: italic;
+    font-size: 16px;
+    margin: 4px 0 16px;
+  }
+  .featured-summary {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .featured-meta {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 24px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    margin-top: 16px;
+  }
+  .featured-meta dt { color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; font-size: 10px; font-weight: 600; padding-top: 2px; }
+  .featured-meta dd { margin: 0; font-weight: 500; }
+
+  /* Knowledge-level body content */
+  .level-body { margin-top: 16px; }
+  .level-body h4 {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+    margin: 24px 0 8px;
+    font-weight: 700;
+  }
+  .level-body p, .level-body li {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .level-body ul {
+    padding-left: 18px;
+    margin: 8px 0;
+  }
+  .level-body .resource {
+    display: block;
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--border);
+    font-family: var(--font-serif);
+    font-size: 14px;
+    color: var(--text-2);
+  }
+  .level-body .resource strong {
+    color: var(--text);
+    font-weight: 500;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* Practice areas, what you actually do in training */
+  .practice-areas {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .practice-areas:empty { display: none; }
+  .practice-areas .pa-kicker {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .practice-areas h4 {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .practice-areas .pa-deck {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--text-2);
+    font-size: 14px;
+    margin: 0 0 16px;
+  }
+  .practice-areas .pa-list {
+    display: grid;
+    gap: 14px;
+  }
+  .practice-areas .pa-item {
+    display: grid;
+    grid-template-columns: minmax(120px, auto) 1fr;
+    gap: 4px 18px;
+    align-items: baseline;
+  }
+  .practice-areas .pa-name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.01em;
+  }
+  .practice-areas .pa-cent {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-left: 8px;
+    vertical-align: 1px;
+  }
+  .practice-areas .pa-cent-core { background: var(--accent-bg); color: var(--accent-text); }
+  .practice-areas .pa-cent-standard { background: var(--surface-2); color: var(--text-2); }
+  .practice-areas .pa-cent-optional { background: transparent; color: var(--text-3); border: 1px solid var(--border); }
+  .practice-areas .pa-cent-style { background: transparent; color: var(--text-3); border: 1px dashed var(--border); }
+  .practice-areas .pa-desc {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-2);
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+  @media (min-width: 700px) {
+    .practice-areas .pa-desc { grid-column: 2 / -1; }
+  }
+
+  /* Details section: practice areas + gear, full-width container after radar */
+  .details-section {
+    background: var(--bg);
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .details-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  .details-header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .details-kicker {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .details-title {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    line-height: 1.2;
+  }
+  .details-deck {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    color: var(--text-2);
+    font-style: italic;
+    margin: 0;
+    max-width: 800px;
+  }
+  .details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .details-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+  /* In the new layout these blocks no longer need their own border-top, since
+     they sit side-by-side and have visual separation via grid spacing */
+  .details-section .practice-areas,
+  .details-section .gear-section {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  /* Gear section, similar visual language to practice areas */
+  .gear-section {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .gear-section:empty { display: none; }
+  .gear-section .gs-kicker {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .gear-section h4 {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .gear-section .gs-deck {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--text-2);
+    font-size: 14px;
+    margin: 0 0 16px;
+  }
+  .gear-section .gs-total {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--text-2);
+    background: var(--surface-2);
+    padding: 8px 12px;
+    margin: 0 0 16px;
+    border-left: 3px solid var(--accent);
+  }
+  .gear-section .gs-total strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .gear-section .gs-list {
+    display: grid;
+    gap: 14px;
+  }
+  .gear-section .gs-item {
+    display: grid;
+    grid-template-columns: minmax(140px, auto) 1fr;
+    gap: 4px 18px;
+    align-items: baseline;
+  }
+  .gear-section .gs-name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.01em;
+  }
+  .gear-section .gs-tier {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-left: 8px;
+    vertical-align: 1px;
+  }
+  .gear-section .gs-tier-required { background: var(--accent-bg); color: var(--accent-text); }
+  .gear-section .gs-tier-soon { background: var(--surface-2); color: var(--text-2); }
+  .gear-section .gs-tier-optional { background: transparent; color: var(--text-3); border: 1px solid var(--border); }
+  .gear-section .gs-price {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .gear-section .gs-desc {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-2);
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+  @media (min-width: 700px) {
+    .gear-section .gs-desc { grid-column: 2 / -1; }
+  }
+
+  /* Radar (web chart) */
+  .radar-card {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: 24px;
+    height: fit-content;
+    position: sticky;
+    top: 24px;
+  }
+  .radar-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+  }
+  .radar-title {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .radar-subtitle {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    font-weight: 600;
+  }
+  .radar-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .radar-control-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+  }
+  .radar-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 0;
+    flex-shrink: 0;
+  }
+  .radar-control-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    font-weight: 600;
+    width: 60px;
+    flex-shrink: 0;
+  }
+  .radar-svg-wrap { display: flex; justify-content: center; align-items: center; }
+  .radar-svg text { font-family: var(--font-sans); }
+  .radar-legend-text {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    color: var(--text-3);
+    margin-top: 12px;
+    text-align: center;
+  }
+
+  /* Stat strip */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 0;
+    margin: 32px 0 48px;
+  }
+  .stat-cell {
+    padding: 0 20px;
+    border-right: 1px solid var(--border);
+  }
+  .stat-cell:last-child { border-right: none; }
+  .stat-num {
+    font-family: var(--font-serif);
+    font-size: 38px;
+    font-weight: 500;
+    line-height: 1;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+  .stat-cap {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    margin-bottom: 6px;
+  }
+  .stat-sub {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.4;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: flex-end;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+    font-family: var(--font-sans);
+  }
+  .control-group { display: flex; flex-direction: column; gap: 4px; }
+  .control-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+    font-weight: 600;
+  }
+  select {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    padding: 6px 10px;
+    background: transparent;
+    color: var(--text);
+    border: none;
+    border-bottom: 1px solid var(--border-strong);
+    cursor: pointer;
+    border-radius: 0;
+    min-width: 160px;
+  }
+  select:focus { outline: none; border-bottom-color: var(--accent); }
+  button {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    padding: 6px 12px;
+    background: transparent;
+    color: var(--text-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 0;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+  }
+  button:hover { background: var(--surface-2); color: var(--text); }
+  button.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .toggle-row { display: flex; gap: 0; }
+  .toggle-row button { border-right-width: 0; }
+  .toggle-row button:last-child { border-right-width: 1px; }
+
+  /* Matrix table */
+  .table-wrap {
+    background: var(--surface);
+    border-top: 2px solid var(--rule);
+    border-bottom: 1px solid var(--border);
+    margin: 0;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    table-layout: fixed;
+  }
+  /* Equal column widths: dimension column fixed, all art columns equal */
+  table col.dim-col-w { width: 240px; }
+  table col.art-col-w { width: auto; }
+
+  th, td { padding: 10px 6px; text-align: center; }
+  thead th {
+    background: var(--surface);
+    font-weight: 600;
+    font-size: 11px;
+    border-bottom: 1px solid var(--rule);
+    cursor: pointer;
+    user-select: none;
+    padding: 12px 4px;
+    letter-spacing: 0.02em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  thead th:hover { background: var(--surface-2); }
+  th.dim-col, td.dim-col {
+    text-align: left;
+    padding-left: 0;
+    padding-right: 16px;
+    background: var(--surface);
+    font-family: var(--font-serif);
+    white-space: normal;
+  }
+  td.dim-col {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    color: var(--text);
+  }
+  td.dim-col:hover { background: var(--surface-2); }
+  td.dim-col .dim-num {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    color: var(--text-4);
+    margin-right: 8px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  td.dim-col .dim-desc {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 11px;
+    color: var(--text-3);
+    margin-top: 2px;
+    text-transform: none;
+    letter-spacing: 0;
+    font-style: normal;
+  }
+  td.heat {
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    transition: transform 0.1s;
+    cursor: pointer;
+    position: relative;
+    font-family: var(--font-sans);
+    font-size: 14px;
+  }
+  td.heat:hover { transform: scale(1.08); box-shadow: 0 0 0 2px var(--accent); z-index: 2; }
+  th.col-highlight, td.col-highlight {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+  }
+  th.col-highlight { background: var(--accent-bg); color: var(--accent-text); }
+  th.col-overlay, td.col-overlay {
+    outline: 2px dashed var(--accent-2);
+    outline-offset: -1px;
+  }
+  th.col-overlay { background: var(--accent-2-bg); color: var(--accent-2-text); }
+
+  td.heat .conf-mark {
+    position: absolute;
+    top: 3px;
+    right: 4px;
+    font-size: 8px;
+    color: rgba(0,0,0,0.45);
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+  td.heat[data-textcolor="light"] .conf-mark { color: rgba(255,255,255,0.7); }
+  td.heat .fn-marker {
+    position: absolute;
+    bottom: 1px;
+    left: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    color: rgba(0,0,0,0.55);
+    pointer-events: none;
+  }
+  td.heat[data-textcolor="light"] .fn-marker { color: rgba(255,255,255,0.8); }
+
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 16px;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    color: var(--text-3);
+    flex-wrap: wrap;
+    letter-spacing: 0.02em;
+  }
+  .legend-stops { display: flex; align-items: center; gap: 0; }
+  .legend-stop { width: 36px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; }
+  .legend-conf { display: flex; gap: 16px; }
+  .legend-conf span { font-weight: 600; color: var(--text-2); }
+
+  .footnotes-block {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px dotted var(--border);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    color: var(--text-3);
+    line-height: 1.5;
+    max-width: 1000px;
+  }
+  .footnotes-block .fn-row {
+    margin-bottom: 6px;
+    display: grid;
+    grid-template-columns: 16px auto 1fr;
+    gap: 4px 10px;
+    align-items: baseline;
+  }
+  .footnotes-block .fn-row .fn-mk {
+    font-weight: 700;
+    color: var(--text-2);
+    text-align: center;
+  }
+  .footnotes-block .fn-row .fn-cell-id {
+    font-weight: 600;
+    color: var(--text-2);
+    white-space: nowrap;
+  }
+
+  /* Tooltip */
+  #tooltip {
+    position: fixed;
+    background: var(--text);
+    color: var(--bg);
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 100;
+    max-width: 320px;
+    line-height: 1.5;
+    opacity: 0;
+    transition: opacity 0.1s;
+  }
+  #tooltip strong { display: block; margin-bottom: 4px; font-size: 13px; }
+  #tooltip .tt-score { font-size: 22px; font-weight: 600; margin: 6px 0; font-family: var(--font-serif); }
+  #tooltip .tt-rule { color: rgba(255,255,255,0.7); font-style: italic; margin-top: 6px; font-size: 11px; }
+  #tooltip .tt-conf { display: inline-block; padding: 1px 6px; background: rgba(255,255,255,0.15); border-radius: 2px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; margin-left: 6px; }
+  #tooltip .tt-footnote {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    font-size: 11px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.4;
+  }
+  #tooltip .tt-fn-marker {
+    font-weight: 700;
+    color: rgba(255,255,255,1);
+    margin-right: 4px;
+  }
+
+  /* Qualitative section */
+  .qualitative-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 32px;
+    margin-top: 24px;
+  }
+  .qual-card {
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+  .qual-card h4 {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .qual-card .qual-deck {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--text-2);
+    font-size: 14px;
+    margin: 0 0 12px;
+  }
+  .qual-card p { font-family: var(--font-serif); font-size: 15px; line-height: 1.6; margin: 0 0 10px; }
+  .qual-card ul { font-family: var(--font-serif); font-size: 14px; line-height: 1.6; padding-left: 18px; margin: 8px 0; color: var(--text-2); }
+
+  /* Methodology */
+  .methodology {
+    background: var(--surface-2);
+    padding: 32px;
+    margin: 48px 0;
+    border-radius: 0;
+    border-left: 3px solid var(--accent);
+  }
+  .methodology h3 { margin-top: 0; color: var(--accent); }
+  .methodology p, .methodology li { font-family: var(--font-serif); font-size: 15px; }
+  .methodology details { margin-top: 16px; }
+  .methodology summary {
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--text-2);
+    padding: 6px 0;
+  }
+  .rubric-table {
+    width: 100%;
+    margin: 12px 0;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    border-collapse: collapse;
+  }
+  .rubric-table th, .rubric-table td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  .rubric-table th { font-weight: 600; color: var(--text-3); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; }
+  .rubric-table td:first-child { font-weight: 600; width: 60px; text-align: center; }
+
+  .ctx-table { font-family: var(--font-sans); font-size: 13px; }
+  .ctx-table th, .ctx-table td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--border); }
+  .ctx-table th { font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); border-bottom: 1px solid var(--rule); cursor: default; }
+  .ctx-table th:hover { background: transparent; }
+  .ctx-table th:nth-child(n+6), .ctx-table td:nth-child(n+6) { text-align: right; font-variant-numeric: tabular-nums; }
+  .ctx-table tr.row-highlight { background: var(--highlight); }
+  .ctx-table tr.row-highlight td { color: var(--highlight-text); }
+  .ctx-table tr { cursor: pointer; }
+  .ctx-table tr:hover { background: var(--surface-2); }
+
+  .footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 2px solid var(--rule);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--text-3);
+    line-height: 1.6;
+  }
+
+  /* Gallery */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .gallery-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .gallery-card .gallery-svg {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-2);
+  }
+  .gallery-card .gallery-svg svg {
+    width: 70%;
+    height: 70%;
+  }
+  .gallery-card .gallery-meta {
+    padding: 10px 12px;
+    border-top: 0.5px solid var(--border);
+    background: var(--surface);
+  }
+  .gallery-card .gallery-name {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .gallery-card .gallery-pose {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    margin-top: 2px;
+    font-weight: 600;
+  }
+
+  .annotation {
+    border-left: 3px solid var(--accent);
+    padding: 12px 0 12px 20px;
+    margin: 24px 0;
+    font-family: var(--font-serif);
+    font-size: 16px;
+    color: var(--text-2);
+    line-height: 1.5;
+    max-width: 700px;
+  }
+  .annotation strong {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+
+  /* Comparison summary inside radar card */
+  .comparison-summary {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .comparison-summary:empty { display: none; }
+  .comparison-summary .cs-kicker {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .comparison-summary .cs-headline {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text);
+    margin: 0 0 12px;
+    font-weight: 500;
+  }
+  .comparison-summary ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .comparison-summary li {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-2);
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--border);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .comparison-summary li:last-child { border-bottom: none; }
+  .comparison-summary li .cs-delta {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .comparison-summary li .cs-dim {
+    font-weight: 500;
+    color: var(--text);
+  }
+  .comparison-summary .cs-similar {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--text-2);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header>
+  <div class="kicker">A calibrated comparison · 16 dimensions · 11 arts</div>
+  <h1>The honest map of the world's common martial arts.</h1>
+  <p class="deck">Most martial-arts comparisons are vibes dressed as data. This one separates what can be measured from what cannot, and does both deliberately.</p>
+  <div class="byline">Methodology · 1 to 5 ordinal scoring · Pre-registered rubrics · April 2026</div>
+</header>
+
+<p class="lede" id="intro-lede">There are roughly <strong>250 million</strong> martial-arts practitioners alive today. They train across maybe a dozen widely-recognized arts and hundreds of style variants. They do it for self-defense, for sport, for fitness, for tradition, and for reasons they often cannot articulate.</p>
+
+<p id="intro-second-para">This piece is a comparison matrix for someone choosing among them. It scores eleven common arts on sixteen dimensions, using a published rubric for each dimension. The rubric is the calibration mechanism: anyone applying it to the same evidence should land within roughly one point of the scores below.</p>
+
+<p id="intro-third-para">Five candidate dimensions failed the calibration test and were demoted to a <em>qualitative considerations</em> section at the bottom. They include several you might expect, like "lethality" in its naive form, and "self-defense effectiveness" as a single judgment. Where the data is thin, the matrix says so.</p>
+
+<div style="margin: 32px 0; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+  <span style="font-family: var(--font-sans); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); font-weight: 600;">Knowledge level</span>
+  <select id="knowledge-level" style="font-family: var(--font-sans); font-size: 14px; padding: 6px 10px; background: transparent; color: var(--text); border: none; border-bottom: 1px solid var(--border-strong); cursor: pointer; min-width: 220px;">
+    <option value="curious" selected>Novice, new to martial arts</option>
+    <option value="familiar">Familiar, know the gist</option>
+    <option value="practiced">Practiced, already train</option>
+  </select>
+</div>
+
+<div class="stat-strip">
+  <div class="stat-cell">
+    <div class="stat-cap">Worldwide leader</div>
+    <div class="stat-num">~80M</div>
+    <div class="stat-sub">Taekwondo practitioners by federation count</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-cap">Newest</div>
+    <div class="stat-num">1993</div>
+    <div class="stat-sub">MMA debuts at UFC 1 in Denver</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-cap">Oldest</div>
+    <div class="stat-num">3,000y</div>
+    <div class="stat-sub">Wrestling's documented continuous practice</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-cap">Olympic sports</div>
+    <div class="stat-num">5</div>
+    <div class="stat-sub">Wrestling, boxing, judo, taekwondo, karate*</div>
+  </div>
+</div>
+
+</div>
+
+<div class="wide">
+
+<h2>The matrix</h2>
+<p class="section-deck" id="matrix-section-deck">Sixteen dimensions, each scored against a rubric defined before the scoring began. Click any column header to focus an art; click any dimension to sort. Hover any cell to see the rule that earned the score.</p>
+
+<div class="controls">
+  <div class="control-group">
+    <span class="control-label">Sort by</span>
+    <div class="toggle-row" id="sort-presets">
+      <button data-sort="default" class="active">order</button>
+      <button data-sort="age">age</button>
+      <button data-sort="world">popularity</button>
+      <button data-sort="resistance">resistance</button>
+      <button data-sort="lethality">lethality</button>
+      <button data-sort="self_defense">self-defense</button>
+    </div>
+  </div>
+  <div class="control-group">
+    <span class="control-label">Cells</span>
+    <div class="toggle-row">
+      <button id="toggle-numbers" class="active">show scores</button>
+    </div>
+  </div>
+  <div class="control-group" style="margin-left: auto; align-items: flex-end;">
+    <span class="control-label" style="text-align: right;">Featured columns are highlighted</span>
+    <div style="display: flex; gap: 16px; font-family: var(--font-sans); font-size: 11px;">
+      <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 14px; height: 14px; background: var(--accent-bg); outline: 2px solid var(--accent); outline-offset: -1px;"></span>featured</span>
+      <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 14px; height: 14px; background: var(--accent-2-bg); outline: 2px dashed var(--accent-2); outline-offset: -1px;"></span>overlay</span>
+    </div>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table id="matrix">
+    <colgroup id="matrix-colgroup"></colgroup>
+    <thead><tr id="header-row"></tr></thead>
+    <tbody id="matrix-body"></tbody>
+  </table>
+</div>
+
+<div class="legend">
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <span style="font-weight: 600; color: var(--text-2);">Score:</span>
+    <div class="legend-stops">
+      <div class="legend-stop" style="background: #F1EFE8; color: #5F5E5A;">1</div>
+      <div class="legend-stop" style="background: #B5D4F4; color: #0C447C;">2</div>
+      <div class="legend-stop" style="background: #378ADD; color: #fff;">3</div>
+      <div class="legend-stop" style="background: #185FA5; color: #fff;">4</div>
+      <div class="legend-stop" style="background: #042C53; color: #fff;">5</div>
+    </div>
+  </div>
+  <div class="legend-conf">
+    <span><b>H</b> = data-grounded</span>
+    <span><b>M</b> = observed practice</span>
+    <span><b>L</b> = expert estimate</span>
+  </div>
+</div>
+
+<div id="footnotes-block" class="footnotes-block"></div>
+
+</div>
+
+<div class="page">
+
+<div class="annotation" id="matrix-annotation">
+  <strong>Reading the matrix</strong>
+  <span id="annotation-text">Taekwondo's profile is the most lopsided in the set. It scores 5 on kick striking, the only art at maximum, and 1 on every grappling dimension. Its strengths are athletic kicking, sport infrastructure, and accessibility. Its blind spots are everything below the waist of an opponent and everything that happens in clinch or on the ground.</span>
+</div>
+
+</div>
+
+<!-- FEATURED ART BLOCK (now after the matrix) -->
+<div class="featured">
+  <div class="featured-grid" style="grid-template-columns: 1fr 1.1fr;">
+    <div>
+      <div class="radar-card" style="position: static;">
+        <div class="radar-header">
+          <h3 class="radar-title" id="radar-title">Taekwondo · profile</h3>
+          <div class="radar-subtitle">All 16 dimensions, 1–5 scale</div>
+        </div>
+        <div class="radar-controls" id="radar-controls"></div>
+        <div class="radar-svg-wrap" id="radar-svg-wrap"></div>
+        <div class="radar-legend-text">Each axis is a dimension from the matrix above. Further from center = higher score.</div>
+        <div id="comparison-summary" class="comparison-summary"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="featured-controls">
+        <div class="control-group">
+          <span class="control-label">Featured art</span>
+          <select id="featured-art">
+            <option value="Taekwondo" selected>Taekwondo</option>
+            <option value="Karate">Karate</option>
+            <option value="Judo">Judo</option>
+            <option value="BJJ">Brazilian jiu-jitsu</option>
+            <option value="Muay Thai">Muay Thai</option>
+            <option value="Boxing">Boxing</option>
+            <option value="Wrestling">Wrestling</option>
+            <option value="Kung Fu">Kung fu</option>
+            <option value="Aikido">Aikido</option>
+            <option value="Krav Maga">Krav Maga</option>
+            <option value="MMA">MMA</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <span class="control-label">Compare with (overlay)</span>
+          <select id="overlay-art">
+            <option value="" selected>none</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="featured-kicker" id="featured-kicker">In focus</div>
+      <h3 class="featured-title" id="featured-title" style="font-family: var(--font-serif); font-size: 42px; font-weight: 500; text-transform: none; letter-spacing: -0.015em; color: var(--text); margin: 0 0 4px;">Taekwondo</h3>
+      <p class="featured-origin" id="featured-origin">Korea · Modern (1955)</p>
+      <p class="featured-summary" id="featured-summary"></p>
+
+      <div id="level-content" class="level-body"></div>
+
+      <dl class="featured-meta" id="featured-meta"></dl>
+    </div>
+  </div>
+</div>
+
+<!-- DETAILS SECTION: practice areas + gear, full-width below the radar -->
+<div class="details-section">
+  <div class="details-inner">
+    <div class="details-header">
+      <div class="details-kicker">Practice and gear</div>
+      <h2 class="details-title" id="details-title">Training in Taekwondo</h2>
+      <p class="details-deck">What you actually do in a class, and what you will need to buy to start. All content updates with the featured art and your knowledge level.</p>
+    </div>
+    <div class="details-grid">
+      <div id="practice-areas" class="practice-areas"></div>
+      <div id="gear" class="gear-section"></div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+<h2>Contextual data</h2>
+<p class="section-deck">Facts, not scores. Origin, age, popularity, female participation. The numbers below come from federation reports and industry surveys, not from rubrics.</p>
+
+<div class="table-wrap">
+  <table class="ctx-table" id="context-table">
+    <thead>
+      <tr>
+        <th>Art</th>
+        <th>Origin</th>
+        <th>Age era</th>
+        <th>Primary range</th>
+        <th>Olympic</th>
+        <th>Worldwide</th>
+        <th>U.S.</th>
+        <th>Female %</th>
+      </tr>
+    </thead>
+    <tbody id="context-body"></tbody>
+  </table>
+</div>
+<p style="font-family: var(--font-sans); font-size: 11px; color: var(--text-3); margin-top: 12px; max-width: 800px;">Practitioner counts are best-available estimates from World Taekwondo, the International Judo Federation, the World Karate Federation, IBJJF, USA Wrestling, and Sports &amp; Fitness Industry Association annual reports. Female participation reflects federation membership where reported; gym-level participation is typically higher.</p>
+
+<h2>Visual identifiers</h2>
+<p class="section-deck">Stylized representations of a signature pose or technique for each art. Drawn in a consistent visual language so that no art appears more or less polished than another.</p>
+
+<!--
+  ============================================================================
+  TO REPLACE WITH PHOTOGRAPHS:
+  ============================================================================
+  The gallery is rendered from the `galleryIcons` object in the script below
+  (search for "const galleryIcons"). Each entry currently has an inline SVG.
+  To use photos instead:
+
+  1. For each art, replace the `svg` value with an <img> tag, e.g.:
+       'Taekwondo': {
+         pose: 'High roundhouse kick',
+         svg: '<img src="images/taekwondo.jpg" alt="Taekwondo competition" style="width:100%; height:100%; object-fit:cover;">'
+       },
+
+  2. The CSS already constrains gallery-svg children to a 1:1 aspect-ratio
+     square. With object-fit:cover, photos of any source dimension will crop
+     uniformly to fit, ensuring no art looks larger or smaller than another.
+
+  3. For best visual consistency:
+       - Use photos from the same era (post-2010 broadcast quality recommended)
+       - Use photos with similar framing (medium shot, single subject)
+       - Use photos with similar lighting (action shots in good light)
+       - Source from a single batch (Getty, Adobe Stock, or curated Wikimedia)
+
+  4. The variable name `svg` is left as-is since changing the field name would
+     require updating the renderGallery function. The contents can be any HTML.
+  ============================================================================
+-->
+<div class="gallery-grid" id="gallery"></div>
+<p style="font-family: var(--font-sans); font-size: 11px; color: var(--text-3); margin-top: 16px; max-width: 800px;">These are stylized illustrations rather than photographs, by design. Photographs of different martial arts vary widely in era, quality, and licensing, which would bias the visual presentation toward whichever arts have the most modern documented imagery. The illustrations show one signature stance or technique per art; many other poses would be equally representative. To replace these with photographs, see the comment block in the page source above this gallery.</p>
+
+<h2>Competition formats</h2>
+<p class="section-deck" id="comp-section-deck">Where competition exists, weight divisions usually do too. The arts without competition have no weight classes, and that absence shapes how they train.</p>
+
+<div class="table-wrap">
+  <table class="ctx-table" id="competition-table">
+    <thead>
+      <tr>
+        <th>Art</th>
+        <th>Competition</th>
+        <th>Weight classes</th>
+        <th>Match length</th>
+        <th>Win conditions</th>
+        <th>Governing body</th>
+      </tr>
+    </thead>
+    <tbody id="competition-body"></tbody>
+  </table>
+</div>
+<p style="font-family: var(--font-sans); font-size: 11px; color: var(--text-3); margin-top: 12px; max-width: 900px;">Weight class counts vary across federations and age groups (junior, senior, masters); figures shown are senior open-class divisions. Match formats vary by amateur vs. professional, regional federation, and rule subset.</p>
+
+<h2>Qualitative considerations</h2>
+<p class="section-deck" id="qual-section-deck">Five candidate dimensions failed the calibration test. Each is honest as prose, dishonest as a number. They live here.</p>
+
+<div class="qualitative-grid">
+  <div class="qual-card">
+    <h4>"Lethality" in the naive sense</h4>
+    <p class="qual-deck">Why theoretical danger is not a measurable axis</p>
+    <p>The lethality column in the matrix above measures one specific thing: <em>terminal goal of trained technique.</em> A boxing match aims for KO; a BJJ match aims for tap; a Krav Maga drill aims for incapacitation. That is calibratable.</p>
+    <p>What is <em>not</em> calibratable is "how dangerous is this art if used to harm someone." Punches kill more humans annually in the U.S. than every martial art technique combined, because frequency of use dominates per-strike severity. An untrained haymaker that connects on concrete is more "lethal" than a trained eye-strike that the practitioner has never thrown at full speed against a real opponent. We do not have data to score arts on this honestly.</p>
+  </div>
+
+  <div class="qual-card">
+    <h4>Self-defense effectiveness, in full</h4>
+    <p class="qual-deck">The composite score is a reasonable proxy. It is not the whole story.</p>
+    <p>The matrix scores self-defense as a function of three things: resistance training intensity, range coverage, and weapons/multi-attacker exposure. That captures most of the signal, but not all.</p>
+    <ul>
+      <li><strong>Krav Maga</strong> scores high because it covers all ranges and trains weapons. It scores lower than its marketing because it lacks competitive pressure-testing.</li>
+      <li><strong>Boxing</strong> scores moderate because it covers one range, but most real fights start standing at striking distance, which is where boxers live.</li>
+      <li><strong>BJJ</strong> scores high but is vulnerable to multiple attackers and weapons, concerns the rubric only partially addresses.</li>
+    </ul>
+    <p>The score is a starting point. The qualitative considerations matter for any specific decision.</p>
+  </div>
+
+  <div class="qual-card">
+    <h4>Style variance within arts</h4>
+    <p class="qual-deck">Each row is a centroid, not a complete picture.</p>
+    <p>Karate is scored against a Shotokan / sport-karate centroid. Kyokushin Karate would score higher on resistance training intensity, lethality, and fitness, meaningfully different art, same row.</p>
+    <p>Kung fu spans Wing Chun (close-quarter, contact-driven), Tai Chi (slow, internal), and Wushu (modern performance). The single Kung fu row averages over all of them and badly misrepresents any one.</p>
+    <p>Taekwondo is scored against the WT/Olympic centroid. ITF Taekwondo permits more hand strikes and lighter contact than the matrix reflects. ATA is closer to a children's program than to either.</p>
+    <p>If you are choosing a school, the school matters more than the art. The matrix tells you the cloud center; the school is the actual point.</p>
+  </div>
+
+  <div class="qual-card">
+    <h4>The "art" question</h4>
+    <p class="qual-deck">The score reflects observable curriculum. It cannot reflect what an art means to its practitioners.</p>
+    <p>The art/tradition score counts things: forms, philosophical curriculum, ritual practice, lineage, cultural artifacts. That makes it calibratable, which is why it stayed in the matrix.</p>
+    <p>What it does not capture is the <em>experience</em> of practice. Aikido's philosophy of harmony, tai chi's connection to qi cultivation, the meditation embedded in karate kata, these matter to practitioners in ways no checklist can reach. People who train these arts often describe transformation that has nothing to do with combat.</p>
+    <p>Take the score for what it is: a count of items present, not a measure of depth.</p>
+  </div>
+
+  <div class="qual-card">
+    <h4>Cost, location, and access</h4>
+    <p class="qual-deck">The matrix does not show what your zip code allows.</p>
+    <p>Taekwondo and karate are nearly ubiquitous in the U.S.; most suburbs have multiple schools. BJJ has exploded over the last fifteen years but remains concentrated in cities and is the most expensive common art at $150–250 per month. Muay Thai gyms cluster around boxing communities. MMA gyms are concentrated in cities with combat-sports scenes.</p>
+    <p>Wrestling is essentially scholastic in the U.S.: high-school and college programs are world-class; adult recreational wrestling is rare. Kung fu schools exist but quality varies dramatically. Aikido schools have declined sharply since the early 2000s.</p>
+    <p>The art you can actually train at consistently beats the art that scores well in the matrix.</p>
+  </div>
+
+  <div class="qual-card">
+    <h4>What the matrix cannot tell you about you</h4>
+    <p class="qual-deck">A note on the personal fit problem.</p>
+    <p>Some people thrive in formal hierarchies and earn-the-belt structures (TKD, karate, BJJ). Others find them stifling and prefer the looser gym culture of boxing or Muay Thai. Some people enjoy the puzzle-solving of grappling; others want to hit things. Some need the discipline structure; others need the chaos.</p>
+    <p>None of this is in the matrix. Most decisions about which martial art to train will turn on it.</p>
+  </div>
+</div>
+
+<h2>Methodology</h2>
+<p class="section-deck" id="method-section-deck">The discipline this matrix tries to honor: define rules first, score second, label confidence honestly.</p>
+
+<div class="methodology">
+  <h3>How calibration works here</h3>
+  <p>For each dimension in the matrix, a rubric was written before any art was scored. The rubric specifies what each integer (1 through 5) means in observable terms, a curriculum element, a ruleset feature, a published statistic. Two analysts applying the same rubric to the same evidence should land within roughly one point on most cells.</p>
+  <p>Each cell carries a confidence label:</p>
+  <ul>
+    <li><strong>H (high)</strong>, applied to documented federation curriculum, ruleset, or peer-reviewed data</li>
+    <li><strong>M (medium)</strong>, applied to widely observed practice; some style variance</li>
+    <li><strong>L (low)</strong>, applied to general knowledge; significant variance or contested evidence</li>
+  </ul>
+  <p>This does not make the matrix a calibrated scientific instrument. It does make it a documented opinion that anyone can audit by reading the rubrics below. Five candidate dimensions did not survive the calibration test and were moved to the qualitative section above.</p>
+
+  <details>
+    <summary>Show all rubrics</summary>
+    <div id="rubrics-content" style="margin-top: 16px;"></div>
+  </details>
+
+  <details>
+    <summary>Show sources</summary>
+    <div style="margin-top: 16px; font-family: var(--font-serif); font-size: 14px; line-height: 1.7;">
+      <p><strong>Practitioner counts:</strong> World Taekwondo membership reports; International Judo Federation; World Karate Federation; IBJJF registered athlete counts; USA Wrestling and AAU enrollment; Sports &amp; Fitness Industry Association (SFIA) participation surveys.</p>
+      <p><strong>Olympic status:</strong> International Olympic Committee program records.</p>
+      <p><strong>Injury epidemiology:</strong> Lystad et al. (2014), "Epidemiology of injuries in full-contact combat sports"; Pocecco et al. (2013), "Injuries in judo: a systematic literature review"; Zazryn et al. (2003), "Injury rates and risk factors in competitive professional boxing."</p>
+      <p><strong>Resistance training methodology:</strong> Thornton, M. (2004), "Why Aliveness?"; broader combat-sports training literature.</p>
+      <p><strong>Curriculum content:</strong> Kukkiwon Taekwondo Textbook; Kodokan judo curriculum; World Karate Federation kata and kumite rules; IBJJF rulebook; published Krav Maga civilian curricula.</p>
+    </div>
+  </details>
+</div>
+
+<div class="footer">
+  <p>This is one informed observer's application of a documented rubric. Reasonable people would shift specific cells by one point. The ordinal patterns are robust; the integer scores are directional.</p>
+  <p>Compiled April 2026. Practitioner counts current as of the most recent federation reports available. Suggestions and corrections welcome, particularly for dimensions where confidence is labeled <strong>L</strong>.</p>
+</div>
+
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+const arts = [
+  { key: 'Taekwondo', label: 'Taekwondo', origin: 'Korea', ageEra: 'Modern (1955)', range: 'Long', olympic: 'Yes (2000–)', world: 80000000, worldLabel: '~80M', us: 3500000, usLabel: '~3.5M', female: '40%',
+    summary: 'Korean martial art defined by long-range, dynamic, and high kicking. The most widely practiced martial art in the world by federation count, an Olympic sport since 2000, and structured around a globally standardized colored-belt curriculum.',
+    pros: 'Athletic kicking development, excellent flexibility and balance, strong sport infrastructure, beginner-friendly, standardized progression.',
+    cons: 'Limited grappling and ground game, sport rules de-emphasize hand strikes, less direct transfer to street self-defense than combat-tested arts.',
+    curious: {
+      what: 'Korean martial art that looks like dynamic, jumping, spinning kicks. The "K" arts you see at the Olympics every four years.',
+      origin_tldr: 'Codified in Korea in 1955 from older Korean kicking traditions and Japanese karate, then exported aggressively worldwide.',
+      typical_class: 'You will warm up, run through poomsae (forms, choreographed solo sequences), drill kicks on pads or in the air, and spar (kyorugi) using point sparring with hogu chest protectors and head gear.',
+      first_year: 'Expect to hold a colored belt within 6–12 months. You will be doing flying kicks within the first year.',
+      cost: 'Typical U.S. dojang: $100–150/month. Belt tests cost extra ($30–80 each). Uniform (dobok) included or ~$40.',
+      try_it: 'Walk into any dojang offering a free trial. Wear loose athletic clothing. Bring water.'
+    },
+    familiar: {
+      what: 'Taekwondo is split into three major branches: World Taekwondo (WT, the Olympic body, electronic scoring, kicks dominate), International Taekwondo Federation (ITF, founded by Choi Hong-hi, more hand strikes, harder contact), and ATA (American Taekwondo Association, primarily a U.S. franchise model, more recreational).',
+      meta_debate: 'WT competition selects strongly against punches because hand strikes to the head are illegal and body punches score 1 point versus a 3-point spinning back kick. This shapes the entire training emphasis. Critics call this "tag with feet"; defenders point to the athletic excellence of elite kickers (Anthony Pettis, Valentina Shevchenko trained TKD).',
+      compared_to: 'Vs Karate, TKD has dramatically more kicking variety, less hand striking. Vs Muay Thai, TKD kicks are higher and faster but Muay Thai checks them and follows with elbows/clinch TKD doesn\'t train. Vs MMA, TKD\'s sport rules don\'t carry over without serious adaptation, but the kicking foundation is genuine.',
+      what_to_look_for: 'A school affiliated with Kukkiwon (the WT certifying body) gives you a portable rank. Check whether sparring is regular and at what contact level. Ask if they teach hand techniques beyond basic blocks, that signals whether the school treats sport rules as the whole art or as a constraint within it.'
+    },
+    practiced: {
+      open_questions: 'How much should hand striking be emphasized in a sport-rules-dominated curriculum? Is the "Olympic style" hurting the art\'s self-defense reputation? Should ITF and WT reconcile or remain separate? What does the post-electronic-scoring meta look like, is the art being optimized for sensor-trips rather than martial efficacy?',
+      bjj_style_critique: 'The reformer position: TKD has elite kicking athletes producing technique that doesn\'t transfer because it\'s scored against opponents who can\'t punch back. The traditionalist position: kicking-as-art-form has independent value and the sport restrictions are what protect the technical depth.',
+      cross_train: 'Common cross-training: boxing for hands, BJJ or judo for grappling. TKD-to-MMA crossovers (Yair Rodriguez, Edson Barboza) tend to keep the kicking and rebuild the rest from scratch.',
+      reading: ['Kukkiwon Taekwondo Textbook (the official curriculum manual)', 'Steven D. Capener, "Problems in the Identity and Philosophy of T\'aegwondo" (Korea Journal, 1995)', 'TKD Times magazine archives for sport-style debate']
+    } },
+
+  { key: 'Karate', label: 'Karate', origin: 'Okinawa / Japan', ageEra: 'Early modern (1920s)', range: 'Mid', olympic: 'Tokyo 2020 only', world: 75000000, worldLabel: '~50–100M', us: 1700000, usLabel: '~1.7M', female: '35%',
+    summary: 'Okinawan striking art emphasizing linear punches, kicks, and forms. Many styles, from full-contact (Kyokushin) to point-sparring (Shotokan). Featured at Tokyo 2020 only.',
+    pros: 'Strong striking fundamentals, deep traditional curriculum, widely available, good fitness benefits.',
+    cons: 'Style varies enormously in practical effectiveness, point-sparring versions can build poor habits, limited grappling.',
+    curious: {
+      what: 'Japanese (originally Okinawan) striking art with punches, kicks, and choreographed forms. The Karate Kid art.',
+      origin_tldr: 'Developed in Okinawa over centuries, formalized in Japan in the 1920s by Gichin Funakoshi (Shotokan) and others, then spread globally after WWII.',
+      typical_class: 'Warm-up, kihon (basic technique repetition), kata (forms), kumite (sparring, usually point-style with light contact).',
+      first_year: 'Yellow or orange belt, basic kata, beginner kumite.',
+      cost: '$80–130/month typical. Uniform (gi) ~$40.',
+      try_it: 'Most dojos offer trial classes. Wear comfortable clothing.'
+    },
+    familiar: {
+      what: 'Major styles: Shotokan (long-range, linear, sport-dominant), Goju-Ryu (closer-range, breathing emphasis), Kyokushin (full-contact, no head punches but knockouts to body legal), Wado-Ryu (lighter, more evasive). They are different sports.',
+      meta_debate: 'The "karate works / doesn\'t work" debate hinges entirely on style. Kyokushin and full-contact karate produce legitimate fighters. Point-sparring Shotokan produces athletes optimized for one-touch tag rules that don\'t transfer. Critics conflate the two and are wrong about half the time.',
+      compared_to: 'Vs TKD, karate has more hand emphasis, lower kicks, more linear movement. Vs Muay Thai, full-contact karate trades less punishment per strike but Muay Thai\'s clinch and elbow game has no karate equivalent.',
+      what_to_look_for: 'Ask which style. Ask whether sparring is point-style or continuous, with contact or without. Watch a class. The variance is so large that "I do karate" tells you almost nothing.'
+    },
+    practiced: {
+      open_questions: 'Is sport karate (WKF rules) saving the art\'s visibility or hollowing out its fighting tradition? Has Tokyo 2020 helped or hurt? Why has Kyokushin\'s influence on MMA (Andy Hug, Lyoto Machida, Stephen Thompson) not produced a karate revival?',
+      bjj_style_critique: 'The combat-effectiveness camp: most karate schools teach a museum piece. The traditionalist camp: kata is technical archive and the art was never primarily about cage fighting.',
+      cross_train: 'Boxing complements every karate style. BJJ fills the ground gap. Kyokushin fighters often add Muay Thai for elbows.',
+      reading: ['Funakoshi, "Karate-Do: My Way of Life"', 'Mas Oyama, "What is Karate?" (Kyokushin foundation text)', 'Iain Abernethy on practical kata application']
+    } },
+
+  { key: 'Judo', label: 'Judo', origin: 'Japan', ageEra: 'Early modern (1882)', range: 'Close', olympic: 'Yes (1964–)', world: 35000000, worldLabel: '~30–40M', us: 200000, usLabel: '~200K', female: '30%',
+    summary: 'Japanese grappling art focused on throws, takedowns, and pins. Founded by Jigoro Kano as a safer evolution of jujutsu. The throwing foundation underlying many modern combat athletes.',
+    pros: 'Elite throwing technique, excellent for self-defense against untrained attackers, strong sport infrastructure.',
+    cons: 'Modern competition rules have eroded leg attacks, limited striking, ground game shallow compared to BJJ.',
+    curious: {
+      what: 'Japanese grappling art. You throw people. Then you pin or submit them on the ground.',
+      origin_tldr: 'Founded by Jigoro Kano in 1882 as a safer evolution of older jujutsu. Olympic sport since 1964 (men) / 1992 (women).',
+      typical_class: 'Warm-up including breakfalls (ukemi), throw drills, randori (live free practice), groundwork (newaza).',
+      first_year: 'Comfortable falling, several throws under pressure, basic pins and submissions.',
+      cost: '$80–130/month. Gi ($60–100). Olympic-track clubs cost more.',
+      try_it: 'USJA, USJF, and USA Judo all list affiliated clubs. Try a beginner class.'
+    },
+    familiar: {
+      what: 'Two competition rule sets: IJF (Olympic, no leg grabs since 2010) and Kosen (older, more groundwork). The 2010 rule change was controversial, banned classic techniques like morote-gari and kata-guruma.',
+      meta_debate: 'Modern IJF judo emphasizes upper-body throws and quick stand-ups from the ground. Critics call it "fencing in pajamas." Defenders argue it prevents stalling and produces explosive throws.',
+      compared_to: 'Vs BJJ, judo emphasizes takedowns, BJJ emphasizes ground work. Same DNA, different specializations. Vs wrestling, judo permits gi grips and submissions, wrestling doesn\'t.',
+      what_to_look_for: 'Heavy emphasis on randori is the practical test. Some schools spend too much time on technique drilling without resistance. Find one with regular sparring.'
+    },
+    practiced: {
+      open_questions: 'Should leg grabs return? Is "pajama wrestling" a fair critique? How does judo-to-BJJ pipeline work culturally, many top BJJ players (Rickson Gracie, Flavio Canto) had judo backgrounds.',
+      bjj_style_critique: 'Practitioners debate whether the IJF has hollowed out the art for TV. Kosen judo lineages quietly continue.',
+      cross_train: 'BJJ for ground depth, wrestling for additional takedown variety. Some judoka add striking late.',
+      reading: ['Kano, "Mind Over Muscle"', 'Daigo Toshiro, "Kodokan Judo: Throwing Techniques"', 'Neil Adams instructional series']
+    } },
+
+  { key: 'BJJ', label: 'Brazilian jiu-jitsu', origin: 'Brazil (via Japan)', ageEra: 'Early modern (1925)', range: 'Ground', olympic: 'No', world: 4000000, worldLabel: '~3–5M', us: 750000, usLabel: '~500K–1M', female: '15%',
+    summary: 'Ground-grappling art descended from judo and Japanese jujutsu, refined in Brazil by the Gracie family. Emphasizes positional control and submissions from the ground.',
+    pros: 'Highest-leverage art for smaller defenders, allows full-resistance training safely, strong self-defense record, MMA-tested.',
+    cons: 'Minimal striking, weak against multiple attackers or weapons, slow learning curve.',
+    curious: {
+      what: 'Ground grappling. You drag fights to the floor and submit your opponent with chokes or joint locks.',
+      origin_tldr: 'Developed in Brazil from 1920s onward by Carlos and Hélio Gracie (after Mitsuyo Maeda brought judo to Brazil). Exploded globally after Royce Gracie won early UFCs.',
+      typical_class: 'Warm-up (often grappling-specific movements), technique of the day, then live rolling, full-resistance sparring on the ground.',
+      first_year: 'White belt with a stripe or two. Basic positions, basic escapes, can survive against another beginner.',
+      cost: '$150–250/month, most expensive common art. Gi ($80–200). Belts are earned slowly: white → blue → purple → brown → black takes ~10 years.',
+      try_it: 'Free trial classes are standard. Wear athletic clothing for the first session; you\'ll need a gi or rash guard later.'
+    },
+    familiar: {
+      what: 'Two formats: gi (with the traditional uniform, grip-heavy, more positional) and no-gi (rashguard and shorts, faster, MMA-relevant). IBJJF is the dominant federation; ADCC is the elite no-gi competition.',
+      meta_debate: 'The "leg lock revolution" of the 2010s, led by John Danaher\'s squad, fundamentally changed competitive BJJ. Older practitioners had to retool. The modern game is far more technically sophisticated than the 1990s game.',
+      compared_to: 'Vs judo, BJJ has deeper ground work, weaker takedowns. Vs wrestling, BJJ has submissions, wrestling has better takedowns and top control.',
+      what_to_look_for: 'Lineage matters culturally but matters less for skill development than: how often is rolling, what\'s the instructor\'s rank, what\'s the upper-belt density. A gym with several active brown and black belts is healthier than one with only the head instructor.'
+    },
+    practiced: {
+      open_questions: 'Is the leg-lock meta sustainable for casual practitioners (knee injuries are up)? Is competition BJJ diverging from self-defense BJJ? How will gi vs no-gi splits evolve?',
+      bjj_style_critique: 'Gracie family infighting (Helio vs Carlos lineages, Rickson vs Royce vs Royler factional debates). The "self-defense BJJ" vs "sport BJJ" debate runs deep.',
+      cross_train: 'Wrestling for takedowns is the most-recommended addition. Striking optional but improves stand-up confidence.',
+      reading: ['Saulo Ribeiro, "Jiu-Jitsu University"', 'John Danaher\'s instructional library (DVDs and BJJ Fanatics releases)', 'Jiu-Jitsu Brotherhood / BJJ Heroes archives']
+    } },
+
+  { key: 'Muay Thai', label: 'Muay Thai', origin: 'Thailand', ageEra: 'Classical (~18th c.)', range: 'Mid + clinch', olympic: 'No (IOC-recognized)', world: 7500000, worldLabel: '~5–10M', us: 350000, usLabel: '~300–400K', female: '25%',
+    summary: 'Thai national sport using fists, elbows, knees, and shins ("the art of eight limbs") plus a punishing clinch game. One of the most practically effective striking systems.',
+    pros: 'Devastating striking with checked-shin defense, elite conditioning, strong clinch game, transfers directly to MMA.',
+    cons: 'Very high injury rate, limited ground defense, training intensity not for everyone.',
+    curious: {
+      what: 'Thai striking. Punches, kicks, knees, elbows, plus a clinch where you control your opponent\'s head and knee them.',
+      origin_tldr: 'Thai military origin centuries old, modernized as a ring sport in the 19th–20th centuries.',
+      typical_class: 'Long warm-up (jump rope, shadowboxing), padwork rounds with a coach, bag work, clinch drilling, sparring (technical or hard, depending on the gym).',
+      first_year: 'Comfortable with the basic strikes, hard-shin conditioning starting, basic clinch awareness.',
+      cost: '$120–180/month. Hand wraps and gloves required (~$60–100 startup).',
+      try_it: 'Look for gyms with active fighters (a real Muay Thai gym usually has fight photos and people preparing for competition).'
+    },
+    familiar: {
+      what: 'Traditional Muay Thai uses the full clinch and elbow arsenal. Western "kickboxing" rules often remove elbows and limit clinch, different sport. Dutch kickboxing (Lucia Rijker era) is a hybrid emphasizing punching combinations and low kicks.',
+      meta_debate: 'ONE Championship and Glory have changed the meta toward more aggression and shorter clinch holds, vs traditional Lumpinee/Rajadamnern scoring which rewards clinch and kicks over punches.',
+      compared_to: 'Vs boxing, Muay Thai accepts more damage in trade for more weapons. Vs TKD, Muay Thai checks kicks and follows with knees. Vs MMA, Muay Thai is the standard MMA striking base.',
+      what_to_look_for: 'Real shin conditioning, regular clinch sparring, hard padwork. Cardio kickboxing classes labeled "Muay Thai" exist and are not it.'
+    },
+    practiced: {
+      open_questions: 'How does Thailand\'s pro circuit (children fighting young, lifetime hard sparring) affect long-term brain health? Is ONE Championship\'s scoring better or worse for the sport? Should the U.S. develop a regional pro scene independent of Thailand?',
+      bjj_style_critique: 'Authenticity wars: "if you didn\'t train in Thailand it doesn\'t count" vs "Thai-trained fighters have more CTE risk."',
+      cross_train: 'BJJ or wrestling to handle takedowns. Boxing for hand precision (Muay Thai punching is often less polished than dedicated boxing).',
+      reading: ['Kru Yodtong\'s legacy materials (Sityodtong gym tradition)', 'Sylvie von Duuglas-Ittu\'s blog 8limbs.us (deep Thai gym immersion)', 'Saenchai instructional content']
+    } },
+
+  { key: 'Boxing', label: 'Boxing', origin: 'England (modern)', ageEra: 'Modern (1867)', range: 'Mid', olympic: 'Yes (1904–)', world: 27000000, worldLabel: '~25–30M', us: 6500000, usLabel: '~6.5M (incl. fitness)', female: '20%',
+    summary: 'Hands-only striking art with the deepest body of competitive evidence of any martial art. Modern rules codified in 1867. Dominant influence on the punching of every other striking system.',
+    pros: 'Best hand striking on earth, world-class footwork and head movement, simple curriculum, widely available.',
+    cons: 'Hands only, CTE risk from accumulated head impacts, limited against non-boxers in clinch or on ground.',
+    curious: {
+      what: 'Punches with gloves. Footwork, head movement, defense. Probably the simplest combat sport on the surface.',
+      origin_tldr: 'Bare-knuckle boxing has ancient roots; modern gloved boxing codified by the Marquess of Queensberry rules in 1867.',
+      typical_class: 'Skip rope, shadowbox, bag work, mitt work with a coach, sparring (in dedicated boxing gyms; less common in fitness-boxing settings).',
+      first_year: 'Basic punches (jab, cross, hook, uppercut), defensive head movement, light sparring if the gym does it.',
+      cost: '$60–150/month at boxing gyms. $30 for hand wraps; $100+ for gloves. Many fitness gyms offer "boxing" without sparring.',
+      try_it: 'Distinguish "boxing gym" (sparring, fighters present) from "boxing fitness" (cardio class). Both are legitimate but produce different outcomes.'
+    },
+    familiar: {
+      what: 'Amateur boxing (Olympic, headgear, points) vs professional boxing (no headgear, KO-oriented). Different tactical demands. The amateur game rewards volume and cleanness; the pro game rewards damage and pace control.',
+      meta_debate: 'The "pure boxing is dead" lament: every elite striker now cross-trains. The counter: boxing fundamentals are still the bedrock of every other striking sport.',
+      compared_to: 'Vs Muay Thai, boxing has deeper hand technique but no kicks/knees/elbows/clinch. Vs MMA, boxing has worst stance for kick defense; MMA fighters have to modify it.',
+      what_to_look_for: 'A gym that produces actual amateurs or pros has a real coaching pipeline. Watch how mitt work is taught, sloppy mitts means sloppy boxers.'
+    },
+    practiced: {
+      open_questions: 'CTE prevalence vs other contact sports, recent studies suggest higher than NFL by exposure. How does headgear change skill development? Is the U.S. amateur pipeline broken (declining medal counts)? What\'s the sustainable path for adult amateur boxers who want competition without long-term damage?',
+      bjj_style_critique: 'Old-school vs modern: lateral movement and angles vs old "stand and trade" generation. Lomachenko\'s footwork as the modern reference point.',
+      cross_train: 'Wrestling/judo for takedown defense if self-defense matters. Cardio cross-training (running, swimming) is traditional and works.',
+      reading: ['Cus D\'Amato\'s teaching tradition (peekaboo style)', 'Edwin Haislet, "Boxing"', 'Teddy Atlas\'s instructional content']
+    } },
+
+  { key: 'Wrestling', label: 'Wrestling', origin: 'Global / ancient', ageEra: 'Ancient (3,000+ y)', range: 'Close', olympic: 'Yes (1896–)', world: 22500000, worldLabel: '~20–25M', us: 400000, usLabel: '~400K (scholastic)', female: '20%',
+    summary: 'The oldest documented combat sport. Folkstyle, freestyle, and Greco-Roman variants. The takedown and top-control foundation of modern MMA.',
+    pros: 'Best takedowns and top control of any art, elite conditioning, dictates where fights happen.',
+    cons: 'No striking, no submissions in most rulesets, limited adult-recreational pathway in the U.S.',
+    curious: {
+      what: 'You take your opponent down and pin them. No strikes, no submissions in most rulesets.',
+      origin_tldr: 'Documented in ancient Sumeria, Egypt, Greece. The first Olympic sport in the modern Games (1896) and ancient.',
+      typical_class: 'Drilling stance, level changes, shots (single legs, double legs, high crotches), sprawls, top/bottom riding. Heavy live wrestling.',
+      first_year: 'In the U.S., wrestling is almost entirely scholastic. Adult clubs exist but are rare. Most adults enter via BJJ or MMA gyms with wrestling classes.',
+      cost: 'Scholastic: free with school participation. Adult clubs: $50–100/month where they exist. Wrestling shoes ($60–120) are required.',
+      try_it: 'Adults: look for "freestyle" or "folkstyle" clubs in your city, many run out of high school or college facilities. Or join a BJJ gym with a wrestling component.'
+    },
+    familiar: {
+      what: 'Three competitive styles: folkstyle (American scholastic, riding-time emphasis), freestyle (Olympic, more open), Greco-Roman (Olympic, no leg attacks). Different tactical games, common base.',
+      meta_debate: 'U.S. folkstyle is technically distinct from international freestyle in subtle ways that have hurt U.S. Olympic performance. The college-folkstyle vs senior-freestyle transition is non-trivial.',
+      compared_to: 'Vs judo, wrestling lacks gi grips and submissions, has better leg attacks. Vs BJJ, wrestling has better takedowns and top control, no submissions.',
+      what_to_look_for: 'Find a club with active competitors at any level. Folkstyle clubs in MA, IA, OK, PA, NJ are deepest in the U.S.'
+    },
+    practiced: {
+      open_questions: 'How can the U.S. develop an adult freestyle pipeline like Russia/Iran? Is folkstyle hurting our Olympic competitiveness? What does the post-NCAA path look like for Division-I athletes who want to keep training?',
+      bjj_style_critique: 'NCAA scoring (riding time, stalling calls) creates tactical patterns that don\'t translate to MMA or international wrestling. Reformers argue for closer alignment to freestyle.',
+      cross_train: 'BJJ for ground after takedown, striking for MMA or self-defense. Wrestlers who add striking become extremely dangerous (Khabib, Henry Cejudo, Kayla Harrison).',
+      reading: ['Dan Gable\'s coaching materials and biographies', 'John Smith instructional', 'FloWrestling and Intermat editorial archives']
+    } },
+
+  { key: 'Kung Fu', label: 'Kung fu', origin: 'China', ageEra: 'Classical (1,500+ y)', range: 'Variable', olympic: 'No', world: 60000000, worldLabel: '~50–70M', us: 500000, usLabel: '~500K', female: '40%',
+    summary: 'Umbrella term for hundreds of Chinese martial arts spanning external styles (Shaolin, Wing Chun) and internal styles (Tai Chi, Bagua). Modern Wushu is the performance-sport branch.',
+    pros: 'Vast technical diversity, deep philosophical and cultural tradition, strong weapons curriculum.',
+    cons: 'Practical effectiveness varies enormously by lineage, performance-Wushu is not combat training.',
+    curious: {
+      what: 'Umbrella term for Chinese martial arts. Includes Wing Chun (Bruce Lee\'s root), Shaolin (the monastery styles), Tai Chi (slow, internal), modern Wushu (gymnastic-performance), and many others.',
+      origin_tldr: 'Centuries to millennia of regional Chinese fighting traditions, codified into named styles over time.',
+      typical_class: 'Highly variable by style. Often: stance training, forms, applications, sometimes sparring. Tai Chi classes will look like slow choreography. Wing Chun classes will look like rapid hand-trapping drills.',
+      first_year: 'A few forms learned. Stances solid. Application understanding depends entirely on the school.',
+      cost: '$80–150/month typically. Some traditional schools cheaper or by donation; some commercial schools expensive.',
+      try_it: 'Vet the school carefully. Quality varies more than any other art on this list.'
+    },
+    familiar: {
+      what: 'Major distinction: external styles (waijia, Shaolin, Wing Chun, Hung Gar) emphasize physical conditioning and direct application; internal styles (neijia, Tai Chi, Xing Yi, Bagua) emphasize internal energy work and indirect force. Modern Wushu (since 1958) is sport-performance, not combat.',
+      meta_debate: 'The "kung fu doesn\'t work in MMA" vs "you\'re training the wrong kung fu" debate runs hot. Cung Le and a few others have shown that some sanda (Chinese kickboxing) crossovers can compete; pure traditional kung fu rarely produces successful MMA fighters.',
+      compared_to: 'Vs karate, same Asian root tradition, Chinese vs Okinawan/Japanese branches, similar variance in practical efficacy. Vs MMA, kung fu generally hasn\'t adapted to live sparring against multiple skill sets.',
+      what_to_look_for: 'Watch for live sparring against resistance. If everything is forms and one-step drills against compliant partners, it\'s a movement art, not a combat art. Both are legitimate; know which one you\'re buying.'
+    },
+    practiced: {
+      open_questions: 'Can traditional kung fu be reformed to compete in modern combat sports while preserving the tradition? What\'s the right relationship between Wushu and historical fighting kung fu? Is the modern sanda program a successful combat reformation or a watered-down hybrid?',
+      bjj_style_critique: 'The "fake kung fu" exposé culture (Xu Xiaodong\'s challenges in China) has forced honest conversations. Some lineages are responding with more pressure-tested training; others are doubling down on tradition.',
+      cross_train: 'Most kung fu practitioners aiming at combat add boxing or Muay Thai for live striking and BJJ for ground.',
+      reading: ['Dr. Yang Jwing-Ming\'s YMAA library (especially internal styles)', 'Ip Man and Bruce Lee biographical work for Wing Chun lineage', 'Peter Lorge, "Chinese Martial Arts: From Antiquity to the Twenty-First Century" (academic history)']
+    } },
+
+  { key: 'Aikido', label: 'Aikido', origin: 'Japan', ageEra: 'Modern (1942)', range: 'Close', olympic: 'No', world: 1500000, worldLabel: '~1–2M', us: 100000, usLabel: '~100K', female: '35%',
+    summary: 'Japanese art of redirection, joint locks, and throws founded by Morihei Ueshiba. Emphasizes harmony with an attacker rather than confrontation. Famously non-competitive.',
+    pros: 'Deep philosophical content, low injury rate, accessible to older practitioners.',
+    cons: 'No alive resistance training, weakest combat-effectiveness record of any major art.',
+    curious: {
+      what: 'Japanese art of redirection and joint locks. You blend with an attacker\'s force and throw them or lock them. Famously cooperative, not competitive.',
+      origin_tldr: 'Founded by Morihei Ueshiba in the 1940s, drawing from Daito-ryu Aiki-jujutsu and his religious philosophy.',
+      typical_class: 'Warm-up, breakfalls, technique practice in pairs (one attacks, one defends, then switch), some weapons (jo staff, bokken wooden sword).',
+      first_year: 'Several core techniques learned, comfortable with breakfalls.',
+      cost: '$60–120/month, often dojo-based and modest. Hakama (pleated skirt) earned at black belt or earlier depending on style.',
+      try_it: 'Aikido schools are friendly and welcoming to all ages. Trial classes standard.'
+    },
+    familiar: {
+      what: 'Major styles: Aikikai (Hombu Dojo lineage, mainstream), Yoshinkan (Gozo Shioda\'s harder branch, used by Tokyo riot police), Iwama (Saito\'s weapons-focused lineage), Tomiki/Shodokan (the one Aikido style that does competition).',
+      meta_debate: 'The defining critique: aikido does not pressure-test. Practitioners cooperate. Even Yoshinkan and other "harder" branches don\'t spar against fully resisting opponents. This is a feature (philosophy) and a bug (combat efficacy) depending on what you\'re looking for.',
+      compared_to: 'Vs judo, aikido has joint locks and weapons, judo has live throwing. Vs Krav Maga, both teach against grabs and weapons attacks but Krav uses scenario drills with more resistance.',
+      what_to_look_for: 'Be honest about why you\'re training. If it\'s for movement, mindfulness, and Japanese tradition, aikido is excellent. If it\'s for combat, it isn\'t.'
+    },
+    practiced: {
+      open_questions: 'Can aikido be reformed to include resistance training without losing its philosophical core (the question Tomiki tried to answer)? Is the post-Ueshiba decline reversible? Why has aikido lost ground globally while BJJ has gained it?',
+      bjj_style_critique: 'The community is increasingly aware of the resistance-training gap. Some teachers (Lenny Sly, Roy Dean coming from BJJ) experiment with cross-training. Most don\'t.',
+      cross_train: 'Judo or BJJ to add live grappling. Many serious aikidoka who want to fight add one.',
+      reading: ['Ueshiba, "The Art of Peace"', 'Ellis Amdur, "Hidden in Plain Sight" (historical critique)', 'Stanley Pranin\'s Aikido Journal archives (essential)']
+    } },
+
+  { key: 'Krav Maga', label: 'Krav Maga', origin: 'Israel', ageEra: 'Modern (1948)', range: 'All', olympic: 'No', world: 1500000, worldLabel: '~1–2M', us: 250000, usLabel: '~250K', female: '40%',
+    summary: 'Israeli military self-defense system synthesizing boxing, wrestling, judo, and aikido elements. Designed for short, decisive encounters including weapons and multiple attackers.',
+    pros: 'Explicitly designed for real self-defense, weapons and multi-attacker training.',
+    cons: 'No competitive pressure-testing, quality varies by school, scenarios can be unrealistic.',
+    curious: {
+      what: 'Israeli military-origin self-defense system. Pulls from boxing, wrestling, judo, and aikido. Designed to end fights quickly, including against weapons and multiple attackers.',
+      origin_tldr: 'Developed by Imi Lichtenfeld for the Haganah and IDF in the 1940s; civilian curriculum spread globally from the 1970s onward.',
+      typical_class: 'Striking pads, scenario drills (defending against grabs, knife threats, gun threats), some sparring or simulation. Less focused on belts and tradition.',
+      first_year: 'Comfort defending against common scenarios (chokes, grabs, basic weapons threats). Striking confidence.',
+      cost: '$120–200/month. Pads/wraps optional, often provided.',
+      try_it: 'Look for Krav Maga Worldwide, Krav Maga Global, or IKMF affiliations. Trial classes standard. Beware "Krav-flavored" cardio classes.'
+    },
+    familiar: {
+      what: 'Major lineages: Krav Maga Worldwide (Darren Levine, U.S.-based, military-flavored civilian), Krav Maga Global (Eyal Yanilov, more international), IKMF (Eli Avikzar lineage), and military Krav (still classified curriculum within IDF). The civilian curricula are 80% similar with branding differences.',
+      meta_debate: 'The "no pressure test" critique: Krav doesn\'t spar against fully resisting opponents the way boxing or BJJ does, so the curriculum is theoretically sound but practically uncertain. Defenders note that scenario drilling is necessary for legal-context defense (de-escalation, weapons, awareness) that sport martial arts ignore.',
+      compared_to: 'Vs MMA, MMA has better one-on-one fighting; Krav has weapons and multi-attacker. Vs boxing, Krav covers more scenarios but with less technical depth in any single weapon.',
+      what_to_look_for: 'Watch for actual hard sparring, not just scripted drills. The best Krav schools have boxing/Muay Thai sparring built into the curriculum. The worst do compliant scenario theater.'
+    },
+    practiced: {
+      open_questions: 'Should Krav adopt sport competition (some splinter groups have tried) to pressure-test? Is the "civilian Krav" market degrading the system through commercialization? How does Krav compare to other military combatives systems (LINE, MCMAP, Systema)?',
+      bjj_style_critique: 'Internal lineage politics are intense (Levine vs Yanilov vs IKMF). Newer practitioners often don\'t realize the divisions exist.',
+      cross_train: 'Boxing or Muay Thai for striking depth, BJJ for ground. Most serious Krav practitioners add at least one combat sport.',
+      reading: ['Imi Lichtenfeld\'s biography materials', 'Yanilov, "Krav Maga: How to Defend Yourself Against Armed Assault"', 'Discussion archives at the Bullshido forum (critical) and KMW forums (defensive)']
+    } },
+
+  { key: 'MMA', label: 'MMA', origin: 'USA / Brazil', ageEra: 'Contemporary (1993)', range: 'All (mixed)', olympic: 'No', world: 4000000, worldLabel: '~3–5M', us: 1000000, usLabel: '~1M', female: '15%',
+    summary: 'Mixed martial arts is the modern synthesis: boxing and Muay Thai striking, wrestling takedowns, BJJ submissions. The most combat-tested combination of techniques in history.',
+    pros: 'Most complete combat sport, full-resistance training across ranges, world-class conditioning.',
+    cons: 'Steepest learning curve, highest injury rate of any common art, demanding time commitment.',
+    curious: {
+      what: 'Mixed martial arts. The cage fighting you see in the UFC. Combines striking, takedowns, and ground submissions in one ruleset.',
+      origin_tldr: 'Modern era began with UFC 1 in 1993, originally a style-vs-style tournament. Settled into the unified-rules format by the 2000s.',
+      typical_class: 'You\'ll likely take separate classes in striking (boxing/Muay Thai), wrestling, and BJJ, plus dedicated MMA sessions where they integrate. Pure "MMA classes" are uncommon for true beginners.',
+      first_year: 'Pick one base art and add the others gradually. White belt in BJJ, basic striking, basic takedowns.',
+      cost: '$150–250/month at MMA gyms with all disciplines. Equipment ($200+ startup): gloves, shin guards, gi, mouthguard.',
+      try_it: 'Most MMA gyms offer trials in their feeder disciplines. Start with one (BJJ or boxing) before going full MMA.'
+    },
+    familiar: {
+      what: 'Modern MMA fighters typically have a base discipline (wrestling, BJJ, boxing, or Muay Thai) and add the others. The "MMA athlete" pipeline now starts younger and trains all disciplines from the start, vs the early UFC era when fighters were single-art specialists.',
+      meta_debate: 'Wrestling is the most-cited "best base" for MMA because takedowns determine where the fight happens. Striking-base fighters (Israel Adesanya, Sean O\'Malley) are less common at the top. The wrestling+BJJ combination has dominated the heavyweight and welterweight divisions.',
+      compared_to: 'Vs every other art on this list, MMA includes them all, in compromised form. The question is whether you want depth in one art or breadth across all.',
+      what_to_look_for: 'Find a gym with active competitive fighters (any level). Watch how the disciplines are taught, separately, integrated, or both. The best gyms have specialists in each art who collaborate.'
+    },
+    practiced: {
+      open_questions: 'How do you balance specialization vs generalization? When does a hobbyist transition from "trains MMA" to "trains BJJ + Muay Thai separately"? CTE risk: MMA appears comparable to or less than boxing per round, but career fight totals matter.',
+      bjj_style_critique: 'The "MMA isn\'t a martial art, it\'s a sport" debate: defenders say all martial arts are sports now anyway. The "cage culture" critique: do gyms select for aggression in unhealthy ways?',
+      cross_train: 'For most adults, the pragmatic path is: pick one base art, drill it for 1–2 years, then add a complementary art. Full MMA training is brutal on the body and best for those with competitive ambition.',
+      reading: ['Sherdog Fight Finder for fight-history research', 'BloodyElbow / The MMA Hour for analysis', 'Jack Slack\'s technical breakdowns', 'Dr. Jack Slack and Connor Ruebusch on MMA technique']
+    } },
+];
+
+// Practice areas: the actual things a practitioner does in training
+// centrality: 'core' (defining), 'standard' (regular curriculum), 'optional' (some schools), 'style' (style-dependent)
+const practiceAreas = {
+  'Taekwondo': [
+    { name: 'Poomsae', centrality: 'core',
+      novice: 'Choreographed solo forms, a sequence of stances, blocks, kicks, and strikes performed in a set pattern.',
+      familiar: 'Taegeuk poomsae (WT, 8 colored-belt + 9 black-belt forms) or Palgwae (older WT) and Chang Hon (ITF) sets. Tested at every belt promotion.',
+      practiced: 'Taegeuk 1–8 (gup grades) and Koryo through Ilyeo (dan grades). Sport-style poomsae is its own competition discipline at WT events. Technical correctness scoring (accuracy + presentation).' },
+    { name: 'Kyorugi (sparring)', centrality: 'core',
+      novice: 'Free sparring with chest protector and headgear. Mostly kicks; head punches not allowed.',
+      familiar: 'Olympic-style continuous sparring under WT rules. Electronic scoring (PSS, Protector Scoring System) since the 2010s. Body kicks 1pt, head kicks 3pt, spinning kicks +1.',
+      practiced: 'PSS-era kyorugi has driven the "tag-with-feet" critique, lift-trip leg movements optimize for sensor activation over technique. ITF kyorugi uses semi-contact rules with hand strikes scored more heavily.' },
+    { name: 'Kyukpa (breaking)', centrality: 'standard',
+      novice: 'Breaking wood boards, bricks, or tiles with strikes and kicks. Dramatic but mostly ceremonial.',
+      familiar: 'Required at black-belt tests and a competition discipline of its own (power breaking and special-technique breaking). Tests both technique and conditioning.',
+      practiced: 'Dan-test requirement; specific patterns prescribed (jumping front kick through three boards, downward strike, etc.). Not core to WT competition prep.' },
+    { name: 'Hosinsul (self-defense)', centrality: 'optional',
+      novice: 'Practical self-defense techniques: escapes from grabs, defenses against punches, sometimes against weapons.',
+      familiar: 'Hosinsul curriculum varies wildly by school. WT-track schools often deprioritize it; ITF and traditional schools emphasize it more.',
+      practiced: 'Largely vestigial in WT/Olympic training. Some Korean masters preserve a deeper hosinsul curriculum. Quality varies.' },
+    { name: 'Step sparring', centrality: 'standard',
+      novice: 'Pre-arranged sequences where one person attacks and the other defends in a scripted pattern.',
+      familiar: 'Three-step (sambo matsogi), two-step (ibo matsogi), and one-step (ilbo matsogi) sparring. A drilling tool, not free fighting.',
+      practiced: 'Pedagogical bridge between forms and free sparring. Stable in traditional curricula, abbreviated or skipped in pure-sport WT programs.' },
+  ],
+  'Karate': [
+    { name: 'Kata', centrality: 'core',
+      novice: 'Solo choreographed forms, sequences of techniques performed against imaginary opponents.',
+      familiar: 'Each style has its own kata canon (Shotokan: Heian, Tekki, Bassai, Kanku-Dai etc.; Goju-Ryu: Sanchin, Tensho, Saifa). A separate competition discipline.',
+      practiced: 'Bunkai (kata application) is the technical depth of the practice. Sport kata judging (WKF flags) has diverged from traditional bunkai-grounded study.' },
+    { name: 'Kihon', centrality: 'core',
+      novice: 'Basic technique drilling: punches, blocks, kicks repeated up and down the floor.',
+      familiar: 'Foundational kihon shapes the style. Shotokan kihon emphasizes long stances and full-extension technique; Goju-Ryu emphasizes shorter stances and breath.',
+      practiced: 'Kihon-vs-application gap is one of karate\'s persistent debates. The Funakoshi-era basics may not match what wins fights, but they encode the style.' },
+    { name: 'Kumite (sparring)', centrality: 'core',
+      novice: 'Sparring. Format varies: WKF point-style (one clean technique scores), Kyokushin full-contact (no head punches but everything else is hard), or other variants.',
+      familiar: 'WKF kumite: one-touch scoring with controlled contact. Kyokushin kumite: bare-knuckle, full-contact, no head punches. Different sports.',
+      practiced: 'Sport-kumite vs. fighting-kumite is the central karate divide. WKF athletes often can\'t apply technique under hard contact; Kyokushin and Daido-juku produce credible fighters.' },
+    { name: 'Tameshiwari (breaking)', centrality: 'optional',
+      novice: 'Breaking boards, tiles, or bricks. More common in Kyokushin and traditional Okinawan styles.',
+      familiar: 'Power-test for hand and foot conditioning; not a sport karate discipline. Required at some black-belt tests in traditional lineages.',
+      practiced: 'Largely a Kyokushin signature in modern karate. WKF-track training rarely includes it.' },
+    { name: 'Kobudo (weapons)', centrality: 'optional',
+      novice: 'Traditional Okinawan weapons, staff (bo), sai, tonfa, nunchaku, taught at some schools.',
+      familiar: 'Kobudo is a parallel weapons tradition closely linked to Okinawan karate lineages. Most sport-karate schools don\'t teach it.',
+      practiced: 'Kobudo has its own kata, lineages (Matayoshi, Yamane-Ryu, Taira), and federations. Schools that integrate it tend to be more traditional.' },
+  ],
+  'Judo': [
+    { name: 'Randori', centrality: 'core',
+      novice: 'Free sparring, both partners try to throw or pin each other in a live match.',
+      familiar: 'Tachi-waza randori (standing) and ne-waza randori (ground). Most session time. Distinct from shiai (formal competition).',
+      practiced: 'Modern IJF randori weights tachi-waza heavily; the classical Kosen lineage emphasizes ne-waza. The 2010 leg-grab ban changed standing randori dynamics significantly.' },
+    { name: 'Uchi-komi', centrality: 'core',
+      novice: 'Drilling throws repeatedly with a cooperative partner, entering the throw without completing it.',
+      familiar: 'Static and moving uchi-komi. The grinding repetition that builds throwing reflex.',
+      practiced: 'Crash-pad uchi-komi (full throws, soft landing) bridges to nage-komi (throwing for completion). Key competition prep.' },
+    { name: 'Nage-no-kata', centrality: 'standard',
+      novice: 'A choreographed demonstration of fifteen classical throws with a partner.',
+      familiar: 'One of seven Kodokan kata; required for higher dan grades.',
+      practiced: 'Nage-no-kata is competition-tested in some federations. Other katas (Katame, Kime, Itsutsu) form the kata curriculum but receive uneven attention by school.' },
+    { name: 'Ne-waza', centrality: 'standard',
+      novice: 'Ground work: pins, holds, joint locks, and chokes from the ground.',
+      familiar: 'Less time than tachi-waza in modern IJF judo. Modern rules require more activity on the ground or referee stands you up.',
+      practiced: 'Ne-waza randori intensity is the diagnostic for judo school depth. BJJ siphoned much of the deep ground tradition; some judoka are reclaiming it.' },
+    { name: 'Ukemi', centrality: 'core',
+      novice: 'Falling safely. Forward, backward, side breakfalls. The first thing every judoka learns.',
+      familiar: 'Mae-ukemi, ushiro-ukemi, yoko-ukemi, mae-mawari-ukemi. Reflexive after a few months.',
+      practiced: 'Ukemi quality is the pedagogical foundation; without it, hard randori is unsafe. A persistent gap in adult-late-starter populations.' },
+  ],
+  'BJJ': [
+    { name: 'Rolling', centrality: 'core',
+      novice: 'Live sparring on the ground. Two practitioners try to position-control and submit each other.',
+      familiar: 'Free rolling at the end of class is standard. 5–7 minute rounds, multiple partners. The core training method.',
+      practiced: 'Positional rolling vs. open rolling vs. specific-task rolling. Modern academies vary the constraint; competition prep gets specific.' },
+    { name: 'Drilling', centrality: 'core',
+      novice: 'Repetition of specific techniques (escapes, sweeps, submissions) with a cooperative partner.',
+      familiar: 'Drill-vs-roll ratio is a contested choice. Some academies (Marcelo Garcia tradition) drill little; others (Roger Gracie tradition) drill extensively.',
+      practiced: 'Drilling vs. positional sparring debate runs deep, the Danaher methodology emphasizes positional sparring over isolated drilling for skill transfer.' },
+    { name: 'Open mat', centrality: 'standard',
+      novice: 'Unstructured session where everyone shows up, picks partners, and rolls or works on what they want.',
+      familiar: 'Saturday-morning institution at most BJJ academies. Cross-academy visiting is normalized.',
+      practiced: 'Open mat is where the deeper community connections form. Visit-week culture at major academies (Atos, Alliance, Marcelo Garcia in NYC) is part of the tradition.' },
+    { name: 'Competition', centrality: 'standard',
+      novice: 'Tournament matches at IBJJF, ADCC, or local events. Submission, points, or advantages decide.',
+      familiar: 'IBJJF gi competitions year-round; ADCC every two years for elite no-gi. Competition track is optional but central to many serious practitioners.',
+      practiced: 'Sport BJJ has diverged technically from self-defense BJJ, guard pulling, IBJJF-specific positions. The Gracie family vs. sport-jiu-jitsu debate runs through this.' },
+  ],
+  'Muay Thai': [
+    { name: 'Padwork', centrality: 'core',
+      novice: 'A coach holds Thai pads and you strike combinations through them. The signature Muay Thai training tool.',
+      familiar: 'Round-by-round padwork with a coach is the spine of training. Builds combinations, conditioning, and timing simultaneously.',
+      practiced: 'Pad coaching is its own art form, Sityodtong/Boonchu/Yokkao lineages each have distinctive holding styles. The pads are ear-level; cardio cost is enormous.' },
+    { name: 'Clinch', centrality: 'core',
+      novice: 'Standing grappling, controlling an opponent\'s neck and posture to land knees and elbows.',
+      familiar: 'Plum clinch, double-collar, body lock. Live clinch sparring is what separates Muay Thai gyms from kickboxing gyms.',
+      practiced: 'Sityodtong-style clinch is positional and technical; Lumpinee-era Thai clinch was more dominant-control-oriented. ONE Championship rules limit clinch time, changing meta.' },
+    { name: 'Sparring', centrality: 'standard',
+      novice: 'Light to hard sparring depending on the gym. Typically lighter than Western kickboxing.',
+      familiar: 'Thai gyms emphasize technical sparring over hard sparring, the Thais spar smart to preserve fighters for actual fights.',
+      practiced: 'The "Thai sparring is technical" tradition is somewhat romanticized; modern Thai gyms vary. Western gyms often spar harder than Thai gyms.' },
+    { name: 'Bag work', centrality: 'standard',
+      novice: 'Hitting heavy bags with combinations. Builds power and conditioning.',
+      familiar: 'Standard between padwork rounds. Heavy bag, banana bag, free-hanging bag work.',
+      practiced: 'Bag work is conditioning more than skill; padwork is the skill driver. Time allocation varies by gym philosophy.' },
+    { name: 'Wai khru', centrality: 'standard',
+      novice: 'A pre-fight ritual dance honoring teachers and ancestors. Performed before bouts in Thailand.',
+      familiar: 'Cultural and spiritual rather than technical. A signature of Thai-tradition Muay Thai vs. Western kickboxing.',
+      practiced: 'Different camps have signature wai khru variations identifying their lineage. ONE Championship shortens or omits it; tradition Lumpinee/Rajadamnern preserves it.' },
+  ],
+  'Boxing': [
+    { name: 'Mitt work', centrality: 'core',
+      novice: 'A coach wears focus mitts and you punch combinations into them while moving.',
+      familiar: 'Mitt work is where boxing is taught. Each coach has a distinctive style, defensive responsibility, footwork demands, combination patterns.',
+      practiced: 'The "mitts as showmanship vs. mitts as teaching" critique: high-speed flashy mitt work that doesn\'t correspond to fight reality is widespread in social-media-era boxing. Real coaches build defensive responsibility into the rounds.' },
+    { name: 'Sparring', centrality: 'core',
+      novice: 'Boxing match in the gym. Headgear, larger gloves, contact level varies.',
+      familiar: 'Distinguish technical sparring (controlled, learning) from hard sparring (closer to fight). Frequency varies, modern coaches reduce hard sparring to limit head trauma.',
+      practiced: 'The Cus D\'Amato-era hard sparring tradition is now controversial. Cuban and modern American programs use more drilling and technical sparring; pro camps reduce hard sparring count.' },
+    { name: 'Bag work', centrality: 'standard',
+      novice: 'Heavy bag, double-end bag, speed bag, different bags train different skills.',
+      familiar: 'Heavy bag: power and combinations. Double-end bag: timing and head movement. Speed bag: rhythm and shoulder endurance.',
+      practiced: 'Bag work is largely solo conditioning and shadowing. Real skill development comes from mitts and sparring. The bag is for refining what mitts taught you.' },
+    { name: 'Shadow boxing', centrality: 'core',
+      novice: 'Boxing alone in front of a mirror or open space. Movement, combinations, defensive reactions.',
+      familiar: 'Warm-up tool and visualization tool. Top boxers shadow box constantly to refine movement.',
+      practiced: 'Shadow boxing is where you find the small refinements, hand position on the chin, weight distribution, return paths. The serious work, even though it looks like the easy work.' },
+    { name: 'Roadwork', centrality: 'standard',
+      novice: 'Running, traditionally early-morning long-distance, for cardiovascular conditioning.',
+      familiar: 'Has shifted in modern training toward intervals and sport-specific cardio rather than long slow distance. Some camps still do classic LSD; others have abandoned it.',
+      practiced: 'Roadwork-vs-intervals debate parallels MMA conditioning evolution. Bryan Mitchell, Ross Enamait, Jorge Mosqueda have published frameworks for evidence-based boxing conditioning.' },
+  ],
+  'Wrestling': [
+    { name: 'Live wrestling', centrality: 'core',
+      novice: 'Free practice, wrestling against a partner full speed under match rules.',
+      familiar: 'Live goes are the core of every practice. Folkstyle, freestyle, or Greco rules depending on the room.',
+      practiced: 'Live-go construction (top, bottom, neutral, situational) is coach craft. Iowa-style hard go culture vs. Cael Sanderson\'s more positional approach are distinct philosophies.' },
+    { name: 'Drilling', centrality: 'core',
+      novice: 'Repetition of moves with a partner, shots (single legs, double legs), sprawls, escapes.',
+      familiar: 'Heavy drill load. Wrestlers drill more than most combat sports, the pattern recognition load is high.',
+      practiced: 'High-rep drilling is the Iowa/Penn State signature; the Russian school drills less but more deliberately. Different paths to the same skill ceiling.' },
+    { name: 'Stance and motion', centrality: 'core',
+      novice: 'Footwork and posture drills. Wrestling is built on a low, mobile stance.',
+      familiar: 'Stance and motion warm-up at the start of every practice. Hand-fighting integrated.',
+      practiced: 'Stance defaults differ by style, folkstyle is squarer, Russian-style is staggered. The stance is the technique foundation.' },
+    { name: 'Weight cutting', centrality: 'standard',
+      novice: 'Reducing body weight to make a competition class. Common in scholastic and elite wrestling.',
+      familiar: 'Cutting culture is deeply embedded but increasingly questioned for health reasons. Modern programs emphasize hydration testing and moderate cuts.',
+      practiced: 'NCAA hydration testing rules (2002+) reformed cutting practices but didn\'t eliminate problems. Cutting cultures vary widely by program; the "wrestlers don\'t talk about food" trope is real.' },
+    { name: 'Conditioning', centrality: 'core',
+      novice: 'Sprints, ladders, climbing rope, partner carries. Wrestling is the most cardiovascularly demanding sport per minute.',
+      familiar: 'Live-go conditioning is the most sport-specific. Auxiliary conditioning supplements but doesn\'t replace it.',
+      practiced: 'Wrestling conditioning research (post-2000) has driven evidence-based programs. The old "do hill sprints until you puke" culture coexists with modern sport-science approaches.' },
+  ],
+  'Kung Fu': [
+    { name: 'Forms (套路 taolu)', centrality: 'core',
+      novice: 'Solo choreographed sequences. Every kung fu style has them; counts and lengths vary.',
+      familiar: 'External-style forms (Shaolin, Wing Chun siu lim tao etc.) emphasize technique sequences; internal-style forms (Tai Chi 24-form, 108-form) emphasize internal awareness.',
+      practiced: 'Modern Wushu forms (changquan, nanquan) are gymnastic-performance disciplines, different goal than traditional fighting forms. The taolu-application gap is the central pedagogical question.' },
+    { name: 'Stance training (站桩 zhan zhuang)', centrality: 'standard',
+      novice: 'Holding low stances for time, sometimes minutes, sometimes much longer in serious schools.',
+      familiar: 'Mabu (horse stance), gongbu (bow stance), xubu (empty stance). Internal-style zhan zhuang is meditative and structural.',
+      practiced: 'The internal-arts zhan zhuang practice (Yiquan, Xingyi) is a distinct discipline with documented physiological effects. External styles use stance training more for conditioning.' },
+    { name: 'Sanda / Sanshou', centrality: 'style',
+      novice: 'Chinese kickboxing, full-contact sparring with throws permitted. The competition branch of kung fu.',
+      familiar: 'Modern Sanda evolved post-1979 as the official PRC competition discipline. Strikes, kicks, and takedowns; no ground fighting.',
+      practiced: 'Sanda is the kung fu form that produces actual fighters (Cung Le, Pat Barry). Disconnected from most traditional kung fu schools, though.' },
+    { name: 'Push hands (推手 tui shou)', centrality: 'style',
+      novice: 'Tai chi sensitivity drill, partners stay in contact and try to disrupt each other\'s balance.',
+      familiar: 'Fixed-step and moving-step versions. A bridge between solo form and combat application.',
+      practiced: 'Push hands competition exists but is technically distant from the form\'s combative origins. The classical chen-style fighting application has been largely lost in mainstream tai chi.' },
+    { name: 'Weapons forms', centrality: 'core',
+      novice: 'Kung fu has the deepest weapons curriculum of any art on this list, staff, sword, spear, broadsword, and many others.',
+      familiar: 'Each style has signature weapons; some practitioners specialize. Wushu weapons (Olympic-aspirant) are gymnastic-performance.',
+      practiced: 'Traditional weapons (jian, dao, qiang, gun) carry distinct combat traditions; the practice level varies enormously. Some lineages preserve fighting application; many teach forms only.' },
+  ],
+  'Aikido': [
+    { name: 'Waza (technique)', centrality: 'core',
+      novice: 'Paired technique practice, one person attacks (uke), the other applies the technique (nage), then they switch.',
+      familiar: 'Uke-nage practice is the entire training method. Cooperative by design, uke gives a committed attack; nage applies the technique.',
+      practiced: 'The cooperative methodology is aikido\'s defining feature and limit. Reformist branches (Tomiki/Shodokan) introduce competition; mainstream Aikikai does not.' },
+    { name: 'Ukemi', centrality: 'core',
+      novice: 'Falling safely. Aikido ukemi is more dynamic than judo ukemi, high breakfalls and rolls.',
+      familiar: 'Mae-ukemi, ushiro-ukemi, koho-ukemi. Aikido emphasizes rolling out of techniques.',
+      practiced: 'Aikido ukemi quality became somewhat performative (the "flying ukemi" critique), uke makes nage look good. Tomiki and harder branches resist this.' },
+    { name: 'Buki-waza (weapons)', centrality: 'standard',
+      novice: 'Wooden weapons practice, jo (4ft staff), bokken (wooden sword), and tanto (wooden knife).',
+      familiar: 'Aikiken (sword), aikijo (staff), and tanto-dori (knife defense). The Iwama lineage (Saito) preserves the deepest weapons curriculum.',
+      practiced: 'Saito\'s 31-jo and 13-jo kata, plus the kumi-tachi paired sword practice, are the technical core. Most non-Iwama schools have a thinner weapons program.' },
+    { name: 'Randori', centrality: 'optional',
+      novice: 'Free practice against multiple attackers, one person defends, several attack with prearranged attacks.',
+      familiar: 'Aikido randori is not free sparring, attackers commit to specific attacks (typically grabs or strikes). Tests application under pressure.',
+      practiced: 'Tomiki randori uses rubber knife and rules-based sparring, the closest aikido gets to live resistance. Most lineages do prearranged-attack randori only.' },
+  ],
+  'Krav Maga': [
+    { name: 'Scenario drills', centrality: 'core',
+      novice: 'Practicing realistic situations: someone grabs you from behind, someone pulls a knife, someone tries to push you against a wall.',
+      familiar: 'Scenario-based training is the Krav signature. Mugging defense, weapon defense, defense from disadvantageous positions.',
+      practiced: 'Scenario realism varies by school. The best Krav uses progressive resistance and uncertain timing; the worst uses scripted compliance ("attacker freezes after the first technique").' },
+    { name: 'Striking pad work', centrality: 'core',
+      novice: 'Combinations of punches, knees, kicks, and elbows on focus pads or shields.',
+      familiar: 'Boxing-influenced striking with simpler combinations than dedicated striking arts. Built around aggression and survival, not technical refinement.',
+      practiced: 'Krav striking is functional rather than technical, the goal is delivering damage under stress, not precision. Often weaker than dedicated boxing or Muay Thai padwork.' },
+    { name: 'Weapons defense', centrality: 'core',
+      novice: 'Defending against knife, gun, stick, and improvised weapons.',
+      familiar: 'Knife defense (front, back, threat vs. attack), gun defense (front, side, behind), stick defense. Major curriculum component.',
+      practiced: 'Weapons defense pedagogy is contested, Tueller drill data on knife distance and the "21-foot rule" suggest most knife defenses are higher-risk than the curriculum implies. Best schools acknowledge limits.' },
+    { name: 'Sparring', centrality: 'optional',
+      novice: 'Some Krav schools spar; others don\'t. Where present, often boxing or kickboxing-derived.',
+      familiar: 'The "live sparring" gap is Krav\'s biggest critique. Schools that integrate boxing/Muay Thai sparring address it; those that don\'t leave a hole.',
+      practiced: 'KMW-affiliated schools tend to spar less; some IKMF and independent Krav gyms integrate combat-sport sparring. The best Krav practitioners cross-train into boxing or BJJ.' },
+    { name: 'Stress drills', centrality: 'standard',
+      novice: 'Eyes-closed starts, fatigue-induced drills, multiple-attacker scenarios, designed to simulate adrenaline.',
+      familiar: 'Adrenaline-state training is a Krav signature. Whether the stress simulation transfers to real assault is debated.',
+      practiced: 'Force science research (Lewinski et al.) supports some stress-inoculation principles; whether Krav-specific stress drills produce the documented physiological transfer is less clear.' },
+  ],
+  'MMA': [
+    { name: 'Sparring (live)', centrality: 'core',
+      novice: 'Full sparring with all elements, striking, takedowns, and ground. Usually with significant gear.',
+      familiar: 'MMA sparring is rarer and more controlled than single-discipline sparring because injury risk is high. Often broken into striking-only, grappling-only, and integrated sessions.',
+      practiced: 'Hard MMA sparring is reserved for fight camps. Most training is segmented by discipline with periodic integration. The "all-out MMA spar" is the riskiest session in any combat sport.' },
+    { name: 'Striking training', centrality: 'core',
+      novice: 'Boxing and Muay Thai sessions: padwork, bag work, technical sparring.',
+      familiar: 'Striking for MMA differs from pure boxing/Muay Thai, different stance (more square to defend takedowns), different combinations (set up shots), different defense (sprawl mixed with head movement).',
+      practiced: 'MMA striking is a hybrid art form, Israel Adesanya\'s Muay Thai background, Conor McGregor\'s boxing-derived hands, Justin Gaethje\'s pure pressure. Each represents a distinct integration philosophy.' },
+    { name: 'Wrestling / takedown training', centrality: 'core',
+      novice: 'Wrestling sessions adapted for MMA, takedowns, takedown defense, cage work.',
+      familiar: 'MMA wrestling differs from collegiate, no riding-time scoring, cage replaces edge of mat, strikes change scrambling dynamics.',
+      practiced: 'Cage wrestling (chain wrestling, cage-wall control, level changes off feints) has become its own discipline. Khabib, Kamaru Usman, Henry Cejudo represent the modern wrestling-base meta.' },
+    { name: 'BJJ / ground training', centrality: 'core',
+      novice: 'Ground sessions adapted for MMA, submissions, escapes, and ground-and-pound positions.',
+      familiar: 'MMA BJJ emphasizes positions where strikes apply (top control, back control) over IBJJF-favored guards. Different competitive selection.',
+      practiced: 'Sub-grappling for MMA has diverged from sport BJJ. Demian Maia, Charles Oliveira, Brian Ortega represent BJJ-base champions; sport-BJJ players often struggle to translate without adaptation.' },
+    { name: 'Strength and conditioning', centrality: 'standard',
+      novice: 'Gym work outside the cage: weights, plyometrics, running, sport-specific conditioning.',
+      familiar: 'MMA S&C has matured rapidly since the 2010s. Periodization, fatigue management, and recovery protocols are increasingly evidence-based.',
+      practiced: 'MMA S&C has its own coaches (Phil Daru, Lorenzo Pavlovich, Joel Jamieson) and frameworks. Fight-camp periodization, weight cut management, and concussion-aware sparring loads are differentiating factors at elite level.' },
+  ],
+};
+
+// Gear: what a beginner actually needs to buy in the first 6 to 12 months.
+// tier: 'required' (day one), 'soon' (within first month or two), 'optional' (later or by school)
+// price ranges in USD, intended as realistic beginner ranges, not high-end
+const gear = {
+  'Taekwondo': [
+    { name: 'Dobok (uniform)', tier: 'required', price: '$30 to $60',
+      novice: 'The white V-neck uniform, made of light cotton or polyester. Usually included in the first month, then replaced as you advance.',
+      familiar: 'WT-style V-neck dobok for sport training; ITF-style closed-front dobok for ITF schools. Junior weights for beginners; 7 oz to 8 oz fabric typical.',
+      practiced: 'Mooto and Daedo are the WT competition standards. Adidas and Macho are common training-grade alternatives. Black trim once you reach black belt.' },
+    { name: 'Belt', tier: 'required', price: 'Included',
+      novice: 'A colored cloth belt that shows your rank. Issued at each promotion test.',
+      familiar: 'Gup grades (white through red), then dan grades (black). Belt color sequences vary slightly by school.',
+      practiced: 'Kukkiwon-issued black belt for WT certification; recognized internationally. Mid-school belts have no portable value.' },
+    { name: 'Sparring gear (hogu set)', tier: 'soon', price: '$150 to $250',
+      novice: 'Chest protector, headgear, forearm and shin guards, mouthguard, and groin cup. Required for sparring class.',
+      familiar: 'Hogu (chest protector), hogu set typically includes electronic-compatible padding for PSS scoring at WT-aligned schools. Reversible blue and red sides.',
+      practiced: 'Daedo and KP&P are the two PSS-electronic systems; gear must match the school\'s sensor system to score. Non-electronic hogu (Mooto, Adidas) cheaper but locks you out of electronic-scoring sparring.' },
+    { name: 'Mouthguard', tier: 'required', price: '$10 to $40',
+      novice: 'A boil-and-bite mouthguard for any contact sparring.',
+      familiar: 'Single-arch mouthguards for most sparring; double-arch for harder contact.',
+      practiced: 'Shock Doctor or SISU for value tier; custom dental-fit ($150+) only for serious competitors.' },
+  ],
+  'Karate': [
+    { name: 'Gi (karategi)', tier: 'required', price: '$30 to $80',
+      novice: 'The white uniform with a wrap top and drawstring pants.',
+      familiar: 'Light gi (8 oz) for sport karate; medium (10 oz to 12 oz) for traditional; heavy (14 oz+) for kata-focused training. Style matters: Shotokan gi has longer sleeves than Kyokushin.',
+      practiced: 'Tokaido, Shureido, and Hirota are the elite Japanese makers. Tokaido Tsunami is the kata-specialist gi. Kyokushin gi (white with kanji) is unique to that style.' },
+    { name: 'Belt (obi)', tier: 'required', price: 'Included',
+      novice: 'Colored belt issued by the school at promotion tests.',
+      familiar: 'Style-specific color progressions. Some schools have stripes for kyu grades; others do not.',
+      practiced: 'Black belts have lineage-specific embroidery options. Mid-school belt rank has no portable certification value.' },
+    { name: 'Mouthguard, hand pads, foot pads', tier: 'soon', price: '$40 to $80',
+      novice: 'Required for sparring. Hand pads are like padded gloves; foot pads cover the top of the foot.',
+      familiar: 'WKF-spec gear for sport karate (red and blue, dipped foam). Kyokushin schools spar with shins and bare hands; less gear required.',
+      practiced: 'Hayashi, Adidas, and Smai are the WKF-approved brands. Kyokushin requires shin guards for body kicks but no hand or foot pads.' },
+  ],
+  'Judo': [
+    { name: 'Judogi', tier: 'required', price: '$60 to $150',
+      novice: 'Heavy white uniform built for grip-based throwing. Heavier than karate gis.',
+      familiar: 'Single-weave (450 g/m²) for beginners and warm climates; double-weave (750 g/m²+) for competition. IJF approval required for sanctioned tournaments.',
+      practiced: 'Mizuno, Fuji, Adidas, and Essimo are the dominant brands. Mizuno Yusho is the IJF-approved competition gi. Blue gi required at international level.' },
+    { name: 'Belt (obi)', tier: 'required', price: 'Included',
+      novice: 'Colored belt issued at promotion tests.',
+      familiar: 'White, yellow, orange, green, blue, brown, then black. Some schools combine grades.',
+      practiced: 'Kodokan-recognized black belt is the international standard; check that your school provides recognized rank certification.' },
+    { name: 'Sandals (zori)', tier: 'optional', price: '$15 to $30',
+      novice: 'Slip-on sandals for walking on and off the mat to keep feet clean.',
+      familiar: 'Mat hygiene practice; not strictly required at every dojo but polite.',
+      practiced: 'Standard expectation at traditional Japanese-lineage dojos. Less common at sport-focused clubs.' },
+  ],
+  'BJJ': [
+    { name: 'Gi (kimono)', tier: 'required', price: '$80 to $200',
+      novice: 'Heavy uniform for gi training. Most schools require white, blue, or black; some allow others.',
+      familiar: 'Pearl weave (~450 g/m²) is the standard. IBJJF-legal gis must meet specific patch and color requirements for competition.',
+      practiced: 'Shoyoroll, Hyperfly, and Origin are the prestige brands; Sanabul and Fuji are value tier. IBJJF-approved colors only for tournament play. Gi vs no-gi schools split here.' },
+    { name: 'Rashguard and shorts', tier: 'soon', price: '$40 to $100',
+      novice: 'For no-gi training. A tight-fitting compression shirt and grappling shorts.',
+      familiar: 'Rashguard prevents skin abrasion and mat burn. Grappling shorts (no pockets, no zippers) for legal no-gi competition.',
+      practiced: 'Hyperfly, Shoyoroll, and 93 Brand are common. IBJJF no-gi rules require ranked-color rashguards (white, blue, purple, brown, black).' },
+    { name: 'Mouthguard', tier: 'required', price: '$10 to $40',
+      novice: 'Required for any sparring (rolling).',
+      familiar: 'Single-arch boil-and-bite is sufficient for the rolling intensity in most academies.',
+      practiced: 'Shock Doctor or SISU for grappling-specific options.' },
+    { name: 'Belt (faixa)', tier: 'required', price: 'Included',
+      novice: 'White, blue, purple, brown, black. Stripes added between belts.',
+      familiar: 'Belt promotions are slow: ~2 years per belt on average to black. Stripes (1 to 4) mark progress within a belt.',
+      practiced: 'Belt politics matter: some lineages cross-train more freely; others enforce single-academy loyalty for promotion.' },
+  ],
+  'Muay Thai': [
+    { name: 'Hand wraps', tier: 'required', price: '$10 to $20',
+      novice: 'Long elastic strips you wrap around your hands and wrists before putting on gloves.',
+      familiar: '180-inch wraps standard; Mexican-style (semi-elastic) most common.',
+      practiced: 'Multiple pairs (you sweat through them). Fairtex, Twins, and Hayabusa are common.' },
+    { name: 'Boxing gloves', tier: 'required', price: '$60 to $150',
+      novice: 'Padded gloves for bag work and sparring. Beginners typically use 14 oz to 16 oz.',
+      familiar: '12 oz to 14 oz for bag work, 16 oz for sparring (heavier protects sparring partners). Lace-up vs Velcro.',
+      practiced: 'Fairtex, Twins, Yokkao, and Top King are the Thai-tradition brands. Winning is the elite tier ($300+). Hayabusa for Western preference.' },
+    { name: 'Shin guards', tier: 'soon', price: '$60 to $120',
+      novice: 'Padded sleeves for the shins, required for sparring kicks.',
+      familiar: 'Curved-shin design specific to Muay Thai (different from MMA shin guards). Cloth-backed for breathability.',
+      practiced: 'Fairtex SP5 and Twins SGL10 are the gym standards. Top King and Yokkao for premium.' },
+    { name: 'Mouthguard', tier: 'required', price: '$10 to $40',
+      novice: 'Required for sparring.',
+      familiar: 'Standard combat-sports mouthguard.',
+      practiced: 'Custom-fit recommended once sparring is regular.' },
+    { name: 'Shorts (Thai-style)', tier: 'optional', price: '$30 to $80',
+      novice: 'Optional but traditional. Short, wide, brightly colored.',
+      familiar: 'Made for kicking and clinching mobility; satin or nylon. Cultural identifier as much as functional.',
+      practiced: 'Camp-specific designs (Sityodtong, Yokkao, Fairtex). Lumpinee or Rajadamnern stadium versions for the deep-tradition vibe.' },
+  ],
+  'Boxing': [
+    { name: 'Hand wraps', tier: 'required', price: '$10 to $20',
+      novice: 'Elastic wraps you put on before gloves. Protect knuckles and wrists.',
+      familiar: '180-inch standard; Mexican-style is most common.',
+      practiced: 'Multiple pairs in rotation. Title, Hayabusa, and Cleto Reyes for premium.' },
+    { name: 'Boxing gloves', tier: 'required', price: '$60 to $200',
+      novice: '12 oz to 16 oz for training. Heavier gloves protect partners during sparring.',
+      familiar: '12 oz to 14 oz for bag work and mitts; 16 oz for sparring. Lace-up gloves fit better; Velcro is more convenient.',
+      practiced: 'Cleto Reyes, Winning, and Grant are the elite tier. Reyes are puncher\'s gloves (less padding); Winning are sparring gold-standard. Title and Hayabusa for value.' },
+    { name: 'Mouthguard', tier: 'required', price: '$10 to $50',
+      novice: 'Required for any sparring.',
+      familiar: 'Single-arch sufficient for amateur; some boxers prefer double-arch.',
+      practiced: 'Custom-fit ($150+) for sparring regularly. Shock Doctor Pro for value.' },
+    { name: 'Headgear', tier: 'soon', price: '$40 to $120',
+      novice: 'Padded helmet for sparring. Protects against cuts and reduces (does not eliminate) brain trauma.',
+      familiar: 'Open-face vs full-cheek vs full-face. Olympic boxing dropped headgear for men in 2013 over data showing it did not reduce concussion rates.',
+      practiced: 'Cleto Reyes and Winning for elite. Sparring headgear is increasingly debated due to CTE concerns; some camps reduce it.' },
+  ],
+  'Wrestling': [
+    { name: 'Wrestling shoes', tier: 'required', price: '$60 to $150',
+      novice: 'High-top shoes with thin soles, made for grip on mats.',
+      familiar: 'Adidas, Nike, and Asics produce the dominant models.',
+      practiced: 'Adidas Combat Speed and Nike Inflict series are the classics. Discontinued Asics Aggressor still sells used at premium.' },
+    { name: 'Singlet', tier: 'soon', price: '$30 to $80',
+      novice: 'One-piece spandex uniform for competition. Practice can be done in shorts and a shirt.',
+      familiar: 'Required for folkstyle and freestyle competition. Two-piece uniforms now permitted in some federations.',
+      practiced: 'Cliff Keen and Brute are the dominant scholastic brands. Custom team singlets common at college level.' },
+    { name: 'Headgear', tier: 'soon', price: '$30 to $60',
+      novice: 'Ear guards to prevent cauliflower ear, required for most folkstyle competition.',
+      familiar: 'Open-design ear protectors. Required at NCAA, optional at most freestyle and Greco-Roman levels.',
+      practiced: 'Cliff Keen Tornado and Asics Snap-Down are the classics. Cauliflower ear is a wrestling badge of honor in some circles, even with headgear available.' },
+    { name: 'Mouthguard', tier: 'optional', price: '$10 to $40',
+      novice: 'Optional but recommended for high-intensity practice.',
+      familiar: 'Less commonly worn than in striking sports; cheap insurance against accidental impacts.',
+      practiced: 'Some wrestlers wear them; many do not. Personal preference at most levels.' },
+    { name: 'Knee pads', tier: 'optional', price: '$20 to $40',
+      novice: 'Cushioning for the knees during shots and ground work.',
+      familiar: 'McDavid and Asics are common.',
+      practiced: 'Optional gear; some wrestlers use them, many do not. School preference matters.' },
+  ],
+  'Kung Fu': [
+    { name: 'Uniform', tier: 'required', price: '$40 to $120',
+      novice: 'Style-specific. Traditional kung fu uniforms have Chinese-style frog buttons; modern Wushu uniforms are silk and ornate.',
+      familiar: 'Sash colors vary by school. External styles often use cotton uniforms with mandarin collars; Wushu performance uniforms are silk satin.',
+      practiced: 'Wushu performance uniforms: Wing Lam, ICNHALL, and PingTong. Traditional kung fu uniforms vary by lineage. Tai chi uniforms are typically simpler cotton.' },
+    { name: 'Kung fu shoes', tier: 'soon', price: '$20 to $60',
+      novice: 'Cotton-soled or rubber-soled flat shoes. Light, flexible.',
+      familiar: 'Feiyue is the iconic budget brand; Double Star is the traditional version.',
+      practiced: 'Feiyue, Double Star, and Top One. Wushu performance shoes have specific sole compounds for floor grip.' },
+    { name: 'Weapons', tier: 'optional', price: '$30 to $200+',
+      novice: 'Bo staff, broadsword, jian (straight sword), or other weapons depending on the style.',
+      familiar: 'Wood and aluminum practice weapons for forms; spring-steel or chrome-steel for competition Wushu.',
+      practiced: 'Wushu jian (collapsible chrome blade for forms competition). Traditional jian (forged spring steel) for serious practitioners. Bo staff: rattan for traditional, white waxwood for Wushu.' },
+    { name: 'Sash (belt)', tier: 'required', price: 'Included or $5 to $15',
+      novice: 'Cloth sash that ties around the waist. Color may indicate rank.',
+      familiar: 'Rank colors vary so widely between schools that they are not portable between lineages.',
+      practiced: 'Lineage-specific: some traditional schools use no rank system at all; Wushu has formal duan grading (1 to 9).' },
+  ],
+  'Aikido': [
+    { name: 'Gi (dogi or keikogi)', tier: 'required', price: '$50 to $120',
+      novice: 'White uniform similar to a judo gi but lighter weight.',
+      familiar: 'Single-weave aikido gi (lighter than judo gi). Some practitioners use judo gi for greater durability.',
+      practiced: 'Iwata, Tozando, and Mizuno aikido gi are the Japanese-tradition options. Mid-tier judogi works well as a substitute.' },
+    { name: 'Hakama', tier: 'soon', price: '$60 to $200',
+      novice: 'Black or dark blue pleated skirt-pants. Worn over the gi after reaching a certain rank (varies by school).',
+      familiar: 'Some schools allow hakama for everyone; most reserve it for black belts (or for women at any rank, traditionally).',
+      practiced: 'Tetron (synthetic, easier care) vs. cotton or wool (traditional, stiffer). Iwata, Tozando, and Tachibana are top-tier. Yoshinkan-style is darker than Aikikai.' },
+    { name: 'Bokken (wooden sword)', tier: 'soon', price: '$30 to $80',
+      novice: 'Wooden practice sword for weapons training.',
+      familiar: 'Standard size for adults. Hardwood; oak or hickory typical.',
+      practiced: 'Iwama-style bokken is heavier and longer than standard Aikikai bokken. Japanese white oak (kashi) is the traditional choice; red oak is the budget option.' },
+    { name: 'Jo (4-foot staff)', tier: 'soon', price: '$25 to $60',
+      novice: 'Wooden staff for weapons training. Used in jo waza and jo kata.',
+      familiar: 'Standard ~50 inches, ~1 inch diameter. Hardwood.',
+      practiced: 'Iwama-tradition (Saito) jo is heavier; Aikikai-standard is lighter. White oak or hickory.' },
+    { name: 'Tanto (wooden knife)', tier: 'optional', price: '$15 to $40',
+      novice: 'Wooden practice knife for tanto-dori (knife defense) training.',
+      familiar: 'Standard pattern, ~12 inches.',
+      practiced: 'Optional for most Aikikai schools; standard at Tomiki/Shodokan schools where tanto randori is competitive.' },
+  ],
+  'Krav Maga': [
+    { name: 'Athletic clothing', tier: 'required', price: 'Use what you own',
+      novice: 'No uniform required. Workout clothes work fine.',
+      familiar: 'Most Krav schools have a t-shirt with the school logo, optional. Some affiliate-specific shirts.',
+      practiced: 'KMW, KMG, and IKMF affiliate gear available. No formal uniform tradition.' },
+    { name: 'MMA gloves', tier: 'soon', price: '$30 to $80',
+      novice: 'Open-fingered gloves for striking pad work and light sparring.',
+      familiar: '4 oz competition or 7 oz training MMA gloves.',
+      practiced: 'Hayabusa, Venum, and Combat Sports for value. Better gloves matter when sparring is regular.' },
+    { name: 'Mouthguard', tier: 'required', price: '$10 to $40',
+      novice: 'Required for sparring scenarios.',
+      familiar: 'Standard combat-sports mouthguard.',
+      practiced: 'Same as boxing or MMA recommendations.' },
+    { name: 'Groin protection', tier: 'soon', price: '$20 to $40',
+      novice: 'Cup or compression-style groin protection for scenario drills.',
+      familiar: 'Required for many drill scenarios involving lower-body strikes.',
+      practiced: 'Standard combat-sports groin protection; nothing Krav-specific.' },
+    { name: 'Training knife / gun', tier: 'optional', price: '$10 to $30',
+      novice: 'Rubber or plastic training weapons for weapons-defense drills. Usually provided by the school.',
+      familiar: 'Rubber guns and rubber knives for stress drills. Some schools use Shocknife (an electrified training knife) for serious stress inoculation.',
+      practiced: 'Shocknife and AirSoft trainers for advanced scenario work. Most students do not need to buy these; the school provides them.' },
+  ],
+  'MMA': [
+    { name: 'Hand wraps', tier: 'required', price: '$10 to $20',
+      novice: 'Same as boxing. Wraps go under all training gloves.',
+      familiar: '180-inch Mexican-style.',
+      practiced: 'Multiple pairs in rotation. Hayabusa, Fairtex, and Title.' },
+    { name: 'Boxing gloves (16 oz for sparring)', tier: 'required', price: '$60 to $200',
+      novice: 'Heavy gloves for boxing and Muay Thai sparring.',
+      familiar: '14 oz for pads, 16 oz for sparring. Common to own multiple pairs.',
+      practiced: 'Same as boxing recommendations. Cleto Reyes, Winning, Hayabusa.' },
+    { name: 'MMA gloves (4 oz to 7 oz)', tier: 'soon', price: '$30 to $80',
+      novice: 'Open-fingered gloves for MMA-specific sparring and bag work.',
+      familiar: '7 oz training gloves are heavier and protect partners; 4 oz competition gloves are for actual fights.',
+      practiced: 'Hayabusa, Venum, Combat Sports for training tier. UFC-spec gloves only matter if competing.' },
+    { name: 'Shin guards', tier: 'required', price: '$60 to $120',
+      novice: 'Required for sparring with kicks.',
+      familiar: 'MMA shin guards are typically slimmer than Muay Thai shins (less restrictive for grappling).',
+      practiced: 'Fairtex, Hayabusa, Combat Sports. Slimmer profiles for MMA-specific use.' },
+    { name: 'Mouthguard', tier: 'required', price: '$10 to $40',
+      novice: 'Required for any sparring.',
+      familiar: 'Single-arch standard.',
+      practiced: 'Custom-fit for serious training; Shock Doctor for value.' },
+    { name: 'Gi (for BJJ component)', tier: 'soon', price: '$80 to $200',
+      novice: 'For BJJ classes within the MMA gym. White, blue, or black depending on school.',
+      familiar: 'Pearl weave is the standard.',
+      practiced: 'Same options as BJJ. Some MMA-focused gyms train no-gi only.' },
+    { name: 'Groin protection', tier: 'required', price: '$20 to $40',
+      novice: 'Cup or compression-style groin protection.',
+      familiar: 'Required for any sparring.',
+      practiced: 'Combat Sports for value; Diamond MMA for premium.' },
+    { name: 'Headgear', tier: 'optional', price: '$40 to $120',
+      novice: 'Optional for sparring; not used in actual MMA fights.',
+      familiar: 'Some gyms use it for hard sparring; many have moved away from it due to mixed evidence on protection.',
+      practiced: 'Headgear use varies by gym philosophy and recent CTE-aware coaching.' },
+  ],
+};
+
+const dimensions = [
+  { key: 'hand',         num: '01', label: 'Hand striking',           desc: 'Punches as primary weapon',
+    rubric: [['1','Hands not trained as primary weapon'],['2','Basic technique; rare in sparring'],['3','Standard sparring component'],['4','Primary phase, full mechanics'],['5','Dominant weapon; defines the art']] },
+  { key: 'kick',         num: '02', label: 'Kick striking',           desc: 'Kicks: variety and emphasis',
+    rubric: [['1','Not trained or low-line basics only'],['2','Basic kicks, not central'],['3','Regularly sparred; standard set'],['4','Primary phase; jumping/spinning'],['5','High/dynamic kicks define art']] },
+  { key: 'knee_elbow',   num: '03', label: 'Knee + elbow striking',   desc: 'Permitted and trained use',
+    rubric: [['1','Not trained or prohibited'],['2','Occasional; rare in sparring'],['3','Permitted in sparring'],['4','Standard, regularly sparred'],['5','Defining weapon of the art']] },
+  { key: 'standing',     num: '04', label: 'Standing grappling',      desc: 'Throws, takedowns, clinch',
+    rubric: [['1','Not trained; clinch breaks'],['2','Basic awareness only'],['3','In curriculum, not primary'],['4','Primary phase, full sparring'],['5','Dominant phase; defines art']] },
+  { key: 'ground',       num: '05', label: 'Ground grappling',        desc: 'Positions, escapes, submissions',
+    rubric: [['1','Not trained; no ground phase'],['2','Basic awareness only'],['3','Present, sparred occasionally'],['4','Primary phase; full curriculum'],['5','Dominant phase; defines art']] },
+  { key: 'resistance',   num: '06', label: 'Resistance training',     desc: 'Live sparring at full resistance',
+    rubric: [['1','No live sparring'],['2','Light contact, scripted'],['3','Sparring with rule limits'],['4','Full-resistance weekly'],['5','Core of training methodology']] },
+  { key: 'offensive',    num: '07', label: 'Offensive intent',        desc: 'Initiation tempo and pressure',
+    rubric: [['1','Pure reactive; no initiation'],['2','Mostly reactive'],['3','Balanced'],['4','Pressure-forward'],['5','Offense-dominant; overwhelm']] },
+  { key: 'defensive',    num: '08', label: 'Defensive depth',         desc: 'Range of defensive technique',
+    rubric: [['1','Minimal defensive curriculum'],['2','Basic blocks only'],['3','Blocks, parries, footwork'],['4','Deep defensive curriculum'],['5','Defense-dominant principle']] },
+  { key: 'lethality',    num: '09', label: 'Lethality',               desc: 'Terminal goal of trained technique',
+    rubric: [['1','Points / control; no finishes'],['2','Submission / tap-based'],['3','KO/TKO via permitted strikes'],['4','Incapacitating to lethal targets'],['5','Lethal-force outcomes primary']] },
+  { key: 'self_defense', num: '10', label: 'Self-defense effect.',    desc: 'Composite: resistance + range + weapons',
+    rubric: [[',','Composite: average of resistance training, range coverage, and weapons/multi-attacker exposure. Rounded to nearest integer.']] },
+  { key: 'sport',        num: '11', label: 'Sport / competition',     desc: 'Federation, ruleset, tournaments',
+    rubric: [['1','No competitive component'],['2','Local exhibitions only'],['3','Regional/national federation'],['4','International championships'],['5','Olympic or equivalent']] },
+  { key: 'art',          num: '12', label: 'Art / tradition',         desc: 'Forms, philosophy, ritual, lineage',
+    rubric: [[',','Checklist: 1 point each for forms, philosophy, ritual, lineage transmission, cultural artifacts. Capped at 5.']] },
+  { key: 'fitness',      num: '13', label: 'Fitness demand',          desc: 'Cardio + strength of session',
+    rubric: [['1','Low; suitable for sedentary'],['2','Moderate gym-equivalent'],['3','High; HR substantially elevated'],['4','Very high; near-max sustained'],['5','Maximal; defines elite cardio']] },
+  { key: 'curve',        num: '14', label: 'Learning curve',          desc: 'Time to functional competence',
+    rubric: [['1','< 3 months'],['2','3–6 months'],['3','6–12 months'],['4','1–2 years'],['5','2+ years']] },
+  { key: 'injury',       num: '15', label: 'Injury risk',             desc: 'Per 1,000 training hours',
+    rubric: [['1','< 1 injury per 1,000h'],['2','1–3 per 1,000h'],['3','3–7 per 1,000h'],['4','7–15 per 1,000h'],['5','> 15 per 1,000h']] },
+  { key: 'weapons',      num: '16', label: 'Weapons component',       desc: 'Trained weapons in curriculum',
+    rubric: [['1','None'],['2','Symbolic only'],['3','Basic forms or drills'],['4','Sparred with gear'],['5','Central to the art']] },
+];
+
+const cells = {
+  'Taekwondo':  [[2,'H'],[5,'H'],[1,'H'],[1,'H'],[1,'H'],[3,'H'],[4,'M'],[3,'M'],[3,'H'],[2,'M'],[5,'H'],[5,'H'],[4,'M'],[3,'M'],[3,'M'],[1,'H','tkd-weapons']],
+  'Karate':     [[4,'H'],[3,'H'],[2,'M'],[1,'H'],[1,'H'],[3,'M'],[3,'M'],[4,'M'],[3,'H'],[2,'M'],[4,'H'],[5,'H'],[3,'M'],[3,'M'],[3,'M'],[2,'M','karate-weapons']],
+  'Judo':       [[1,'H'],[1,'H'],[1,'H'],[5,'H'],[3,'H'],[4,'H'],[3,'M'],[3,'M'],[2,'H'],[3,'M'],[5,'H'],[4,'M'],[4,'M'],[4,'M'],[3,'H'],[1,'H']],
+  'BJJ':        [[1,'H'],[1,'H'],[1,'H'],[3,'H'],[5,'H'],[5,'H'],[3,'M'],[4,'M'],[2,'H'],[3,'M'],[4,'H'],[3,'M'],[3,'M'],[5,'M'],[3,'H'],[1,'H']],
+  'Muay Thai':  [[5,'H'],[4,'H'],[5,'H'],[2,'H'],[1,'H'],[5,'H'],[5,'M'],[3,'M'],[3,'H'],[3,'M'],[3,'M'],[2,'M'],[5,'M'],[4,'M'],[4,'H'],[1,'H','muay-thai-weapons']],
+  'Boxing':     [[5,'H'],[1,'H'],[1,'H'],[1,'H'],[1,'H'],[5,'H'],[4,'M'],[5,'M'],[3,'H'],[2,'M'],[5,'H'],[2,'M'],[5,'M'],[3,'M'],[4,'H'],[1,'H']],
+  'Wrestling':  [[1,'H'],[1,'H'],[1,'H'],[5,'H'],[4,'H'],[5,'H'],[5,'M'],[4,'M'],[2,'H'],[3,'M'],[5,'H'],[2,'M'],[5,'M'],[5,'M'],[4,'H'],[1,'H']],
+  'Kung Fu':    [[3,'L'],[3,'L'],[3,'L'],[3,'L'],[2,'L'],[2,'L'],[3,'L'],[4,'L'],[3,'L'],[3,'L'],[2,'M'],[5,'H'],[3,'L'],[5,'L'],[2,'L'],[4,'M']],
+  'Aikido':     [[1,'H'],[1,'H'],[1,'H'],[4,'H'],[1,'H'],[1,'H'],[1,'H'],[5,'M'],[2,'M'],[2,'M'],[1,'H'],[5,'H'],[2,'M'],[5,'M'],[1,'M'],[3,'H']],
+  'Krav Maga':  [[4,'M'],[3,'M'],[3,'M'],[3,'M'],[2,'M'],[3,'M'],[5,'M'],[3,'M'],[4,'M'],[4,'M'],[1,'H'],[1,'H'],[4,'M'],[2,'M'],[3,'L'],[4,'H']],
+  'MMA':        [[5,'H'],[4,'H'],[4,'H'],[5,'H'],[5,'H'],[5,'H'],[5,'M'],[4,'M'],[3,'H'],[4,'M'],[5,'H'],[1,'M'],[5,'M'],[5,'M'],[5,'H'],[1,'H']],
+};
+
+// Cell-level footnotes. Keyed by id, referenced from cells[art][dim][2].
+const footnotes = {
+  'tkd-weapons': {
+    marker: '†',
+    text: `Score reflects the WT/Olympic centroid, which is empty-hand. Some ITF Taekwondo programs include bo staff and nunchaku basics; certain ATA curricula incorporate weapons forms. None are central to the art and weapons sparring is essentially absent. A practitioner-level score for a weapons-inclusive ITF or ATA dojang would be 2.`
+  },
+  'karate-weapons': {
+    marker: '†',
+    text: `Score reflects sport-karate centroid. Okinawan kobudo is a parallel weapons tradition (bo, sai, tonfa, nunchaku) closely linked to traditional karate lineages but typically taught separately. Schools that integrate kobudo would score 4. Most modern sport-karate dojos do not.`
+  },
+  'muay-thai-weapons': {
+    marker: '†',
+    text: `Modern Muay Thai is empty-hand. Krabi-krabong, the Thai weapons art (sword, staff), shares historical roots and some training overlap, but is a distinct discipline taught at specialized schools.`
+  }
+};
+
+const ramp = ['#F1EFE8','#B5D4F4','#378ADD','#185FA5','#042C53'];
+const textRamp = ['#5F5E5A','#0C447C','#FFFFFF','#FFFFFF','#FFFFFF'];
+const textColorClass = ['dark','dark','light','light','light'];
+function fillFor(v) { return ramp[Math.max(0, Math.min(4, v - 1))]; }
+function textFor(v) { return textRamp[Math.max(0, Math.min(4, v - 1))]; }
+function classFor(v) { return textColorClass[Math.max(0, Math.min(4, v - 1))]; }
+
+const PRIMARY_COLOR = '#185FA5';
+const PRIMARY_FILL = '#378ADD';
+const OVERLAY_COLOR = '#D85A30';
+const OVERLAY_FILL = '#F0997B';
+
+let sortKey = 'default';
+let featuredArt = 'Taekwondo';
+let overlayArt = '';
+let knowledgeLevel = 'curious';
+let showNumbers = true;
+
+function getOrdered() {
+  const ordered = arts.slice();
+  if (sortKey === 'default') return ordered;
+  if (sortKey === 'age') {
+    const order = ['Wrestling','Kung Fu','Muay Thai','Judo','Karate','BJJ','Boxing','Aikido','Krav Maga','Taekwondo','MMA'];
+    ordered.sort((a,b) => order.indexOf(a.key) - order.indexOf(b.key));
+  } else if (sortKey === 'world') ordered.sort((a,b) => b.world - a.world);
+  else if (sortKey === 'us') ordered.sort((a,b) => b.us - a.us);
+  else {
+    const dIdx = dimensions.findIndex(d => d.key === sortKey);
+    if (dIdx >= 0) ordered.sort((a,b) => cells[b.key][dIdx][0] - cells[a.key][dIdx][0]);
+  }
+  return ordered;
+}
+
+function renderColgroup() {
+  const cg = document.getElementById('matrix-colgroup');
+  cg.innerHTML = '';
+  const dimCol = document.createElement('col');
+  dimCol.className = 'dim-col-w';
+  cg.appendChild(dimCol);
+  arts.forEach(() => {
+    const c = document.createElement('col');
+    c.className = 'art-col-w';
+    cg.appendChild(c);
+  });
+}
+
+function renderMatrix() {
+  const ordered = getOrdered();
+  const headerRow = document.getElementById('header-row');
+  headerRow.innerHTML = '';
+
+  const dimTh = document.createElement('th');
+  dimTh.className = 'dim-col';
+  dimTh.textContent = 'Dimension';
+  headerRow.appendChild(dimTh);
+
+  ordered.forEach(art => {
+    const th = document.createElement('th');
+    th.innerHTML = art.label;
+    th.title = art.label;
+    if (art.key === featuredArt) th.classList.add('col-highlight');
+    if (art.key === overlayArt && overlayArt) th.classList.add('col-overlay');
+    th.addEventListener('click', () => {
+      featuredArt = art.key;
+      document.getElementById('featured-art').value = art.key;
+      updateFeatured();
+      renderMatrix();
+    });
+    headerRow.appendChild(th);
+  });
+
+  const body = document.getElementById('matrix-body');
+  body.innerHTML = '';
+  dimensions.forEach((dim, dIdx) => {
+    const tr = document.createElement('tr');
+
+    const labelCell = document.createElement('td');
+    labelCell.className = 'dim-col';
+    labelCell.innerHTML = `<div><span class="dim-num">${dim.num}</span>${dim.label}</div><div class="dim-desc">${dim.desc}</div>`;
+    labelCell.addEventListener('click', () => {
+      sortKey = dim.key;
+      renderMatrix();
+      document.querySelectorAll('#sort-presets button').forEach(b => b.classList.remove('active'));
+    });
+    tr.appendChild(labelCell);
+
+    ordered.forEach(art => {
+      const cell = cells[art.key][dIdx];
+      const v = cell[0], conf = cell[1], fnId = cell[2] || null;
+      const td = document.createElement('td');
+      td.className = 'heat';
+      td.dataset.textcolor = classFor(v);
+      if (art.key === featuredArt) td.classList.add('col-highlight');
+      if (art.key === overlayArt && overlayArt) td.classList.add('col-overlay');
+      td.style.background = fillFor(v);
+      td.style.color = textFor(v);
+      const fnMarker = fnId && footnotes[fnId] ? `<span class="fn-marker">${footnotes[fnId].marker}</span>` : '';
+      td.innerHTML = `${showNumbers ? v : ''}${fnMarker}<span class="conf-mark">${conf}</span>`;
+      td.addEventListener('mouseenter', (e) => showTooltip(e, art, dim, v, conf, fnId));
+      td.addEventListener('mousemove', moveTooltip);
+      td.addEventListener('mouseleave', hideTooltip);
+      td.addEventListener('click', () => {
+        featuredArt = art.key;
+        document.getElementById('featured-art').value = art.key;
+        updateFeatured();
+        renderMatrix();
+      });
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+
+  renderContext();
+}
+
+function renderContext() {
+  const ctx = document.getElementById('context-body');
+  ctx.innerHTML = '';
+  arts.forEach(art => {
+    const tr = document.createElement('tr');
+    if (art.key === featuredArt) tr.classList.add('row-highlight');
+    tr.innerHTML = `
+      <td style="font-weight: 600;">${art.label}</td>
+      <td>${art.origin}</td>
+      <td>${art.ageEra}</td>
+      <td>${art.range}</td>
+      <td>${art.olympic}</td>
+      <td>${art.worldLabel}</td>
+      <td>${art.usLabel}</td>
+      <td>${art.female}</td>
+    `;
+    tr.addEventListener('click', () => {
+      featuredArt = art.key;
+      document.getElementById('featured-art').value = art.key;
+      updateFeatured();
+      renderMatrix();
+    });
+    ctx.appendChild(tr);
+  });
+  renderCompetition();
+}
+
+// Competition format data: weight divisions, match length, win conditions, governing body
+const competition = {
+  'Taekwondo':  { has: true,  weights: '8 senior (men), 8 (women)',     length: '3 × 2 min rounds',          win: 'Points (electronic), KO, RSC',           gov: 'World Taekwondo (WT)' },
+  'Karate':     { has: true,  weights: '5 senior (men), 5 (women)',     length: '3 min (kumite)',            win: 'Points (ippon, waza-ari, yuko)',         gov: 'World Karate Federation (WKF)' },
+  'Judo':       { has: true,  weights: '7 senior (men), 7 (women)',     length: '4 min + golden score',      win: 'Ippon, waza-ari accumulation, shido',    gov: 'International Judo Federation (IJF)' },
+  'BJJ':        { has: true,  weights: '8 senior (men), 8 (women) gi',  length: '5–10 min by belt',          win: 'Submission, points, advantages',         gov: 'IBJJF (gi), ADCC (no-gi)' },
+  'Muay Thai':  { has: true,  weights: '17 (pro, IFMA-aligned)',         length: '5 × 3 min rounds',          win: 'KO, TKO, decision (10-point must)',      gov: 'IFMA (amateur), various pro' },
+  'Boxing':     { has: true,  weights: '17 (pro), 13 (Olympic)',         length: '12 × 3 min (pro), 3 × 3 (am)', win: 'KO, TKO, decision',                    gov: 'WBA, WBC, IBF, WBO (pro), AIBA (am)' },
+  'Wrestling':  { has: true,  weights: '10 (freestyle), 10 (Greco)',     length: '2 × 3 min periods',         win: 'Pin, points, technical superiority',     gov: 'United World Wrestling (UWW)' },
+  'Kung Fu':    { has: 'mixed', weights: 'Sanda: 11 senior',             length: 'Sanda: 2 × 2 min',          win: 'Sanda: KO, points, off-platform',        gov: 'IWUF (Wushu / Sanda)' },
+  'Aikido':     { has: false, weights: ',',                              length: ',',                          win: ',',                                       gov: ', (non-competitive by design)' },
+  'Krav Maga':  { has: false, weights: ',',                              length: ',',                          win: ',',                                       gov: ', (no formal competition)' },
+  'MMA':        { has: true,  weights: '12 (men), 4 (women) UFC',        length: '3 × 5 min (5 × 5 title)',   win: 'KO, TKO, submission, decision',          gov: 'UFC, ONE, PFL, Bellator (no unified body)' },
+};
+
+function renderCompetition() {
+  const tbody = document.getElementById('competition-body');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  arts.forEach(art => {
+    const c = competition[art.key];
+    if (!c) return;
+    const tr = document.createElement('tr');
+    if (art.key === featuredArt) tr.classList.add('row-highlight');
+    let compLabel;
+    if (c.has === true) compLabel = '<span style="color: var(--accent); font-weight: 600;">Yes</span>';
+    else if (c.has === false) compLabel = '<span style="color: var(--text-3);">No</span>';
+    else compLabel = '<span style="color: var(--text-2);">Partial</span>';
+    tr.innerHTML = `
+      <td style="font-weight: 600;">${art.label}</td>
+      <td>${compLabel}</td>
+      <td style="text-align: left;">${c.weights}</td>
+      <td style="text-align: left;">${c.length}</td>
+      <td style="text-align: left;">${c.win}</td>
+      <td style="text-align: left;">${c.gov}</td>
+    `;
+    tr.addEventListener('click', () => {
+      featuredArt = art.key;
+      document.getElementById('featured-art').value = art.key;
+      updateFeatured();
+      renderMatrix();
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+const tooltip = document.getElementById('tooltip');
+function showTooltip(e, art, dim, v, conf, fnId) {
+  let ruleText = '';
+  if (dim.rubric && dim.rubric.length > 1) {
+    const rule = dim.rubric.find(r => r[0] == v);
+    if (rule) ruleText = rule[1];
+  } else if (dim.rubric && dim.rubric.length === 1) {
+    ruleText = dim.rubric[0][1];
+  }
+  let fnHtml = '';
+  if (fnId && footnotes[fnId]) {
+    fnHtml = `<div class="tt-footnote"><span class="tt-fn-marker">${footnotes[fnId].marker}</span> ${footnotes[fnId].text}</div>`;
+  }
+  tooltip.innerHTML = `<strong>${art.label} · ${dim.label}</strong><div class="tt-score">${v} / 5 <span class="tt-conf">${conf === 'H' ? 'high confidence' : conf === 'M' ? 'medium confidence' : 'low confidence'}</span></div><div class="tt-rule">${ruleText}</div>${fnHtml}`;
+  tooltip.style.opacity = '1';
+  moveTooltip(e);
+}
+function moveTooltip(e) {
+  const x = e.clientX + 14;
+  const y = e.clientY + 14;
+  tooltip.style.left = Math.min(x, window.innerWidth - 340) + 'px';
+  tooltip.style.top = Math.min(y, window.innerHeight - 140) + 'px';
+}
+function hideTooltip() { tooltip.style.opacity = '0'; }
+
+function buildRadar() {
+  const radarSize = 440;
+  const cx = radarSize / 2, cy = radarSize / 2;
+  const radius = 145;
+  const n = dimensions.length;
+  const angle = (i) => -Math.PI/2 + (2 * Math.PI * i) / n;
+
+  let gridSvg = '';
+  for (let r = 1; r <= 5; r++) {
+    let pts = [];
+    for (let i = 0; i < n; i++) {
+      const a = angle(i);
+      const rr = (r / 5) * radius;
+      pts.push(`${cx + Math.cos(a)*rr},${cy + Math.sin(a)*rr}`);
+    }
+    gridSvg += `<polygon points="${pts.join(' ')}" fill="none" stroke="var(--border)" stroke-width="0.5"/>`;
+  }
+  for (let i = 0; i < n; i++) {
+    const a = angle(i);
+    gridSvg += `<line x1="${cx}" y1="${cy}" x2="${cx + Math.cos(a)*radius}" y2="${cy + Math.sin(a)*radius}" stroke="var(--border)" stroke-width="0.5"/>`;
+  }
+
+  function buildPolygon(artKey, color, fillColor, fillOpacity) {
+    let pts = [];
+    for (let i = 0; i < n; i++) {
+      const a = angle(i);
+      const v = cells[artKey][i][0];
+      const rr = (v / 5) * radius;
+      pts.push(`${cx + Math.cos(a)*rr},${cy + Math.sin(a)*rr}`);
+    }
+    return `<polygon points="${pts.join(' ')}" fill="${fillColor}" fill-opacity="${fillOpacity}" stroke="${color}" stroke-width="2.5"/>`;
+  }
+
+  let labels = '';
+  for (let i = 0; i < n; i++) {
+    const a = angle(i);
+    const lr = radius + 18;
+    const lx = cx + Math.cos(a) * lr;
+    const ly = cy + Math.sin(a) * lr;
+    const anchor = Math.cos(a) > 0.3 ? 'start' : Math.cos(a) < -0.3 ? 'end' : 'middle';
+    labels += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle" font-size="10" fill="var(--text-3)" font-weight="600">${dimensions[i].num}</text>`;
+  }
+
+  let polygons = '';
+  if (overlayArt && overlayArt !== featuredArt) {
+    polygons += buildPolygon(overlayArt, OVERLAY_COLOR, OVERLAY_FILL, 0.25);
+  }
+  polygons += buildPolygon(featuredArt, PRIMARY_COLOR, PRIMARY_FILL, 0.35);
+
+  const svg = `<svg class="radar-svg" width="${radarSize}" height="${radarSize}" viewBox="0 0 ${radarSize} ${radarSize}">${gridSvg}${polygons}${labels}</svg>`;
+  document.getElementById('radar-svg-wrap').innerHTML = svg;
+
+  const featArt = arts.find(a => a.key === featuredArt);
+  const overArt = arts.find(a => a.key === overlayArt);
+  document.getElementById('radar-title').textContent = overArt ? `${featArt.label} vs ${overArt.label}` : `${featArt.label} · profile`;
+
+  const controls = document.getElementById('radar-controls');
+  let html = `<div class="radar-control-row"><span class="radar-swatch" style="background: ${PRIMARY_FILL}; border: 2px solid ${PRIMARY_COLOR};"></span><span class="radar-control-label">Featured</span><span style="font-weight: 500;">${featArt.label}</span></div>`;
+  if (overArt) {
+    html += `<div class="radar-control-row"><span class="radar-swatch" style="background: ${OVERLAY_FILL}; border: 2px solid ${OVERLAY_COLOR}; opacity: 0.7;"></span><span class="radar-control-label">Overlay</span><span style="font-weight: 500;">${overArt.label}</span></div>`;
+  }
+  controls.innerHTML = html;
+
+  renderComparisonSummary(featArt, overArt);
+}
+
+function renderComparisonSummary(featArt, overArt) {
+  const c = document.getElementById('comparison-summary');
+  if (!overArt) { c.innerHTML = ''; return; }
+
+  // Compute deltas across all dimensions
+  const deltas = dimensions.map((dim, i) => {
+    const fv = cells[featArt.key][i][0];
+    const ov = cells[overArt.key][i][0];
+    return { dim, fv, ov, delta: fv - ov, abs: Math.abs(fv - ov) };
+  });
+
+  const maxAbs = Math.max(...deltas.map(d => d.abs));
+  const sumAbs = deltas.reduce((s, d) => s + d.abs, 0);
+
+  // Sort by absolute difference, take top 3
+  const top = deltas.slice().sort((a, b) => b.abs - a.abs).slice(0, 3);
+
+  // Similarity threshold: if max single delta <= 1 AND total sum across 16 dims <= 8, call it "very similar"
+  const verySimilar = maxAbs <= 1 && sumAbs <= 8;
+  // "Quite similar": max delta 2 and sum reasonable
+  const quiteSimilar = !verySimilar && maxAbs <= 2 && sumAbs <= 14;
+
+  const lvl = knowledgeLevel;
+
+  if (verySimilar) {
+    const headline = lvl === 'curious'
+      ? `${featArt.label} and ${overArt.label} are nearly twins on this matrix.`
+      : lvl === 'familiar'
+      ? `${featArt.label} and ${overArt.label} score within one point on every dimension. They are functionally interchangeable as scored.`
+      : `${featArt.label} and ${overArt.label} cluster tightly across all 16 dimensions (max Δ=${maxAbs}, sum Δ=${sumAbs}). The matrix cannot meaningfully distinguish them.`;
+    const followup = lvl === 'curious'
+      ? `For someone choosing between them, the decision will turn on what is available near you and which gym culture you prefer, not on the arts themselves.`
+      : lvl === 'familiar'
+      ? `Differences worth investigating live in the qualitative section: style variance within each art, school quality, lineage politics, and personal fit.`
+      : `Distinguishing them requires moving below the centroid: lineage-level analysis, head-to-head competitive history, or specific style comparisons (e.g., ${featArt.label} sub-style X vs ${overArt.label} sub-style Y).`;
+
+    c.innerHTML = `
+      <div class="cs-kicker">Comparison summary</div>
+      <p class="cs-headline">${headline}</p>
+      <p class="cs-similar">${followup}</p>
+    `;
+    return;
+  }
+
+  // Build the divergence bullets
+  function bulletText(d) {
+    const dimLabel = d.dim.label;
+    const featV = d.fv;
+    const overV = d.ov;
+    const winner = featV > overV ? featArt.label : overArt.label;
+    const loser = featV > overV ? overArt.label : featArt.label;
+    const wScore = Math.max(featV, overV);
+    const lScore = Math.min(featV, overV);
+    const ruleW = (d.dim.rubric && d.dim.rubric.length > 1) ? d.dim.rubric.find(r => r[0] == wScore) : null;
+    const ruleL = (d.dim.rubric && d.dim.rubric.length > 1) ? d.dim.rubric.find(r => r[0] == lScore) : null;
+
+    if (lvl === 'curious') {
+      // Plain language: focus on what it means in practice
+      return `<span class="cs-dim">${dimLabel}.</span> ${winner} (${wScore}/5) emphasizes this far more than ${loser} (${lScore}/5).`;
+    } else if (lvl === 'familiar') {
+      // Reference the rubric rule
+      const ruleText = ruleW ? ` (${ruleW[1].toLowerCase()})` : '';
+      return `<span class="cs-dim">${dimLabel}.</span> ${winner} scores ${wScore}${ruleText}; ${loser} scores ${lScore}.`;
+    } else {
+      // Practiced: full rubric language and Δ
+      const wText = ruleW ? ruleW[1] : `score ${wScore}`;
+      const lText = ruleL ? ruleL[1] : `score ${lScore}`;
+      return `<span class="cs-dim">${dimLabel}</span> (Δ${d.abs}). ${winner}: ${wText.toLowerCase()}. ${loser}: ${lText.toLowerCase()}.`;
+    }
+  }
+
+  let headline = '';
+  if (lvl === 'curious') {
+    headline = quiteSimilar
+      ? `${featArt.label} and ${overArt.label} share a lot but diverge on a few important things.`
+      : `${featArt.label} and ${overArt.label} differ most in the following ways.`;
+  } else if (lvl === 'familiar') {
+    headline = quiteSimilar
+      ? `Largely overlapping profiles. Top divergences:`
+      : `Top three points of divergence:`;
+  } else {
+    headline = quiteSimilar
+      ? `Profiles overlap on most axes. Largest deltas:`
+      : `Largest deltas across the 16 dimensions:`;
+  }
+
+  let bullets = '<ul>';
+  top.forEach(d => {
+    bullets += `<li><span class="cs-delta">Δ${d.abs}</span><span>${bulletText(d)}</span></li>`;
+  });
+  bullets += '</ul>';
+
+  c.innerHTML = `
+    <div class="cs-kicker">Comparison summary · ${lvl === 'curious' ? 'plain language' : lvl === 'familiar' ? 'with rubric rules' : 'with rubric deltas'}</div>
+    <p class="cs-headline">${headline}</p>
+    ${bullets}
+  `;
+}
+
+function updateFeatured() {
+  const art = arts.find(a => a.key === featuredArt);
+  if (!art) return;
+
+  document.getElementById('featured-title').textContent = art.label;
+  document.getElementById('featured-origin').textContent = `${art.origin} · ${art.ageEra}`;
+  document.getElementById('featured-summary').textContent = art.summary;
+  document.getElementById('featured-kicker').textContent = `In focus · ${knowledgeLevelLabel(knowledgeLevel)}`;
+  const dt = document.getElementById('details-title');
+  if (dt) dt.textContent = `Training in ${art.label}`;
+
+  document.getElementById('featured-meta').innerHTML = `
+    <dt>Range</dt><dd>${art.range}</dd>
+    <dt>Olympic</dt><dd>${art.olympic}</dd>
+    <dt>Worldwide</dt><dd>${art.worldLabel}</dd>
+    <dt>U.S.</dt><dd>${art.usLabel}</dd>
+    <dt>Female</dt><dd>${art.female}</dd>
+  `;
+
+  renderLevelContent(art);
+  renderPracticeAreas(art);
+  renderGear(art);
+  buildRadar();
+  renderOverlayDropdown();
+  updatePageProse();
+}
+
+function knowledgeLevelLabel(lvl) {
+  return lvl === 'curious' ? 'For the novice' : lvl === 'familiar' ? 'For the familiar' : 'For the practiced';
+}
+
+const pageProse = {
+  curious: {
+    lede: `There are roughly <strong>250 million</strong> martial-arts practitioners alive today, training across maybe a dozen widely-recognized arts. People do this for many reasons: self-defense, sport, fitness, the discipline, the community. Choosing one is harder than it looks because every art makes claims about itself that do not quite match what actually happens in training.`,
+    second: `This piece is a starting point for someone trying to choose. It compares eleven common arts using a system that scores each one on sixteen specific qualities, like "how much kicking does it have" or "how realistic is the sparring." Each score has a written rule behind it, so the comparison is not just one person's opinion.`,
+    third: `Some questions cannot be answered with numbers, like "is this art deadly" or "is it a real art or just a sport." Those live in a separate <em>qualitative considerations</em> section at the bottom, written as plain prose. The honest answer is sometimes "it depends," and this page tries to say so when that is the case.`,
+    matrixDeck: `Each row is a quality of the art (what it teaches, how it trains, what it competes in). Each column is one of eleven arts. Darker cells mean more of that quality. Click any column to focus an art and see its profile; click a row to sort.`,
+    annotation: `Taekwondo is the most lopsided art on the matrix. It is built around dynamic, athletic kicking, and it does not really teach much grappling, throws, or ground fighting. If you want to be a great kicker with strong sport and competition pathways, this is your art. If you want to handle every situation, this is not the only thing you should train.`,
+    qualDeck: `Some things cannot fit in a number. Each card below is one of those things, explained in plain language.`,
+    methodDeck: `How we tried to make this honest: write the scoring rules first, score second, and admit when something is too fuzzy to score at all.`,
+    compDeck: `Most arts have competitions, and where competitions exist, fighters are sorted by weight so size does not decide the match. The arts without competition (Aikido, Krav Maga) train differently because they do not have to win against a resisting opponent under rules.`
+  },
+  familiar: {
+    lede: `Eleven arts mapped across four functional families. <strong>Pure striking:</strong> Boxing (hands), Taekwondo (long-range kicks), Karate (mid-range strikes), Muay Thai (eight-limb striking + clinch). <strong>Pure grappling:</strong> Judo (standing throws), Wrestling (takedowns + control), BJJ (ground submissions). <strong>Hybrid combat sports:</strong> MMA (full-range integration). <strong>Self-defense / traditional systems:</strong> Krav Maga (multi-range scenario-driven), Aikido (joint-lock redirection), Kung fu (heterogeneous, ranges from internal to external).`,
+    second: `Pre-registered ordinal rubric across sixteen dimensions, scored 1–5. Dimensions cluster into five groups: <em>technical content</em> (hand striking, kick striking, knee/elbow striking, standing grappling, ground grappling, weapons), <em>training methodology</em> (resistance intensity, fitness demand, injury risk, learning curve), <em>orientation</em> (offensive intent, defensive depth, lethality), <em>institutional</em> (sport vs art, competition structure), and one composite (self-defense effectiveness).`,
+    third: `Five candidate dimensions failed calibration and live in <em>qualitative considerations</em>: lethality in its naive theoretical-damage sense, self-defense as direct judgment, style variance within arts, the experiential side of "art / tradition," and cost / access. Lethality and self-defense survived in the matrix only by being narrowed to observable rubrics, terminal-goal-of-trained-technique, and a composite of resistance training plus range coverage plus weapons exposure.`,
+    matrixDeck: `Sixteen dimensions across eleven arts, ordinal 1–5 against rubrics. Click headers to focus a column; click rows to sort. Confidence labels (H/M/L) per cell flag where the scoring is data-grounded versus expert estimate. Hover any cell for the rubric rule that earned the score.`,
+    annotation: `Taekwondo's profile is the most lopsided in the set. It scores 5 on kick striking, the only art at maximum, and 1 on every grappling dimension. Strengths: athletic kicking, sport infrastructure, accessibility. Blind spots: clinch, takedowns, ground. The WT/Olympic ruleset's de-emphasis of hand strikes (head punches illegal, body punches scored 1 point versus 3+ for spinning kicks) shapes the entire training emphasis, which is why hand striking scores 2 rather than the 4–5 you would see for traditional or full-contact karate.`,
+    qualDeck: `Five dimensions that did not survive the rubric test. Each is honest as prose, dishonest as a number, moved here to be discussed without false precision.`,
+    methodDeck: `Pre-register rubrics, score against them, label confidence honestly. Five demoted dimensions, one composite (self-defense), centroid scoring for arts with high style variance.`,
+    compDeck: `Eight of eleven arts have formal competition with weight divisions. The exceptions are diagnostic: Aikido is non-competitive by design (cooperative methodology); Krav Maga has no formal competition (scenario-driven training); Kung fu has competition only in the Sanda branch. The presence or absence of weight classes tracks closely with whether an art trains under live resistance.`
+  },
+  practiced: {
+    lede: `Eleven arts, four functional families, sixteen calibrated dimensions. <strong>Striking:</strong> Boxing, TKD, Karate, Muay Thai. <strong>Grappling:</strong> Judo (tachi-waza dominant), Wrestling (takedown + top control), BJJ (newaza dominant). <strong>Hybrid:</strong> MMA. <strong>Self-defense / traditional:</strong> Krav Maga, Aikido, Kung fu. Centroid scoring per art. Style splits noted qualitatively (Karate ~ Shotokan/sport; TKD ~ WT/Olympic; Wrestling ~ folkstyle/freestyle blend; Kung fu ~ acknowledged-non-coherent centroid).`,
+    second: `Sixteen dimensions in five clusters. <em>Technical content</em> (6): hand striking, kick striking, knee/elbow striking, standing grappling, ground grappling, weapons. <em>Training methodology</em> (4): resistance training intensity, fitness demand, injury risk, learning curve. <em>Orientation</em> (3): offensive intent, defensive depth, lethality (re-cast as terminal-goal-of-trained-technique per rubric). <em>Institutional</em> (2): sport/competition focus, art/tradition focus. <em>Composite</em> (1): self-defense effectiveness = mean(resistance training, range coverage, weapons/multi-attacker exposure), rounded.`,
+    third: `Demoted to qualitative: naive lethality (per-strike severity is unmeasurable; frequency-weighted homicide data dominated by untrained punches), self-defense as direct judgment (composite version retained), within-art style variance (e.g., Karate Kyokushin vs Shotokan profiles diverge by 2+ points on resistance and lethality), the experiential dimension of art/tradition, and cost/access geography. Beginner accessibility was killed entirely as a redundant composite of inverse learning curve, inverse injury risk, and cost.`,
+    matrixDeck: `16 × 11 ordinal heatmap, calibrated rubrics. Tooltip exposes rubric rule per cell. H/M/L confidence per cell: H = federation curriculum, ruleset, or peer-reviewed data; M = widely observed practice with style variance; L = general knowledge or contested evidence. Sort by any dimension or external metric (age category, world popularity).`,
+    annotation: `TKD shows the most lopsided profile in the set: kicking 5 (sole maximum), all grappling axes at 1. Hand striking 2 reflects WT-rules selection against punches (head punches illegal; body punches 1 point vs. spinning back kick 3+ points under PSS scoring). Self-defense composite of 2 = mean(resistance 3, range coverage 1, weapons 1) = 1.67, rounds to 2. The matrix is harder on TKD than vibes-based comparisons because the rubric punishes range narrowness even when within-range execution is elite.`,
+    qualDeck: `Five dimensions that failed the calibration test. Listed as prose because false precision is the matrix's biggest credibility risk.`,
+    methodDeck: `Pre-registration discipline (rubric → score, not score → rubric). H/M/L confidence gating. Five demotions to qualitative. Self-defense reduced to composite-of-rubrics. Inter-rater claim: anyone applying the rubrics to the same evidence should land within ±1 on most cells.`,
+    compDeck: `Weight divisions where competition exists. Note the divergence in division counts (Boxing 17 pro / 13 Olympic; UFC 12 men / 4 women; Taekwondo 8 / 8 senior), federation-specific, age-group-specific, and contested. Aikido and civilian Krav Maga have no formal competition; Kung fu's competitive expression is essentially Sanda. Olympic-program presence (TKD, Judo, Wrestling, Boxing) correlates with division standardization; non-Olympic combat sports (Muay Thai, BJJ, MMA) have more federation-level fragmentation.`
+  }
+};
+
+function updatePageProse() {
+  const p = pageProse[knowledgeLevel];
+  if (!p) return;
+  const lede = document.getElementById('intro-lede');
+  if (lede) lede.innerHTML = p.lede;
+  const second = document.getElementById('intro-second-para');
+  if (second) second.innerHTML = p.second;
+  const third = document.getElementById('intro-third-para');
+  if (third) third.innerHTML = p.third;
+  const md = document.getElementById('matrix-section-deck');
+  if (md) md.innerHTML = p.matrixDeck;
+  const at = document.getElementById('annotation-text');
+  if (at) at.innerHTML = p.annotation;
+  const qd = document.getElementById('qual-section-deck');
+  if (qd) qd.innerHTML = p.qualDeck;
+  const mtd = document.getElementById('method-section-deck');
+  if (mtd) mtd.innerHTML = p.methodDeck;
+  const cd = document.getElementById('comp-section-deck');
+  if (cd && p.compDeck) cd.innerHTML = p.compDeck;
+}
+
+function renderLevelContent(art) {
+  const c = document.getElementById('level-content');
+  let html = '';
+  if (knowledgeLevel === 'curious') {
+    const k = art.curious;
+    html += `<h4>What is it, really?</h4><p>${k.what}</p>`;
+    html += `<h4>Where it came from</h4><p>${k.origin_tldr}</p>`;
+    html += `<h4>What a typical class looks like</h4><p>${k.typical_class}</p>`;
+    html += `<h4>Your first year</h4><p>${k.first_year}</p>`;
+    html += `<h4>Cost</h4><p>${k.cost}</p>`;
+    html += `<h4>How to try it</h4><p>${k.try_it}</p>`;
+  } else if (knowledgeLevel === 'familiar') {
+    const k = art.familiar;
+    html += `<h4>The styles within</h4><p>${k.what}</p>`;
+    html += `<h4>The current debate</h4><p>${k.meta_debate}</p>`;
+    html += `<h4>Compared with neighbors</h4><p>${k.compared_to}</p>`;
+    html += `<h4>What to look for in a school</h4><p>${k.what_to_look_for}</p>`;
+  } else if (knowledgeLevel === 'practiced') {
+    const k = art.practiced;
+    html += `<h4>Open questions in the community</h4><p>${k.open_questions}</p>`;
+    html += `<h4>The internal debate</h4><p>${k.bjj_style_critique}</p>`;
+    html += `<h4>Cross-training paths</h4><p>${k.cross_train}</p>`;
+    html += `<h4>Reading list</h4>`;
+    k.reading.forEach(r => {
+      html += `<div class="resource"><strong>${r}</strong></div>`;
+    });
+  }
+  c.innerHTML = html;
+}
+
+function renderPracticeAreas(art) {
+  const c = document.getElementById('practice-areas');
+  if (!c) return;
+  const list = practiceAreas[art.key];
+  if (!list || list.length === 0) { c.innerHTML = ''; return; }
+
+  const lvl = knowledgeLevel;
+  const deck = lvl === 'curious'
+    ? `These are the actual things you do in a ${art.label} class, the hands-on side of training, beyond the scoring matrix above.`
+    : lvl === 'familiar'
+    ? `Practice areas in the ${art.label} curriculum. Centrality flags how core each is to standard training.`
+    : `Practice areas with technical names. Centrality classification: core (defines the art), standard (regular curriculum), optional (school-dependent), style-dependent (varies by branch).`;
+
+  let html = `<div class="pa-kicker">Practice areas</div><h4>What you actually do in training</h4><p class="pa-deck">${deck}</p><div class="pa-list">`;
+
+  list.forEach(pa => {
+    const desc = pa[lvl] || pa.familiar || pa.novice || '';
+    const centLabel = pa.centrality === 'core' ? 'Core'
+      : pa.centrality === 'standard' ? 'Standard'
+      : pa.centrality === 'optional' ? 'Optional'
+      : 'Style-dependent';
+    const centClass = `pa-cent-${pa.centrality}`;
+    html += `<div class="pa-item"><div class="pa-name">${pa.name}<span class="pa-cent ${centClass}">${centLabel}</span></div><p class="pa-desc">${desc}</p></div>`;
+  });
+
+  html += `</div>`;
+  c.innerHTML = html;
+}
+
+// Parse a price string like "$30 to $80" or "$10 to $20" or "Included or $5 to $15"
+// Return [low, high] in dollars, or null if free/included
+function parsePriceRange(priceStr) {
+  if (!priceStr) return null;
+  if (/^Included/i.test(priceStr) && !/\$/.test(priceStr)) return [0, 0];
+  if (/^Use what/i.test(priceStr)) return [0, 0];
+  const matches = priceStr.match(/\$(\d+(?:,\d+)?)/g);
+  if (!matches || matches.length === 0) return null;
+  const nums = matches.map(m => parseInt(m.replace(/[$,]/g, ''), 10));
+  if (nums.length === 1) return [nums[0], nums[0]];
+  return [Math.min(...nums), Math.max(...nums)];
+}
+
+function renderGear(art) {
+  const c = document.getElementById('gear');
+  if (!c) return;
+  const list = gear[art.key];
+  if (!list || list.length === 0) { c.innerHTML = ''; return; }
+
+  const lvl = knowledgeLevel;
+
+  // Compute required-tier startup cost range
+  let lowTotal = 0, highTotal = 0;
+  list.forEach(item => {
+    if (item.tier === 'required') {
+      const range = parsePriceRange(item.price);
+      if (range) { lowTotal += range[0]; highTotal += range[1]; }
+    }
+  });
+  const startupRange = lowTotal === highTotal
+    ? `$${lowTotal}`
+    : `$${lowTotal} to $${highTotal}`;
+
+  const deck = lvl === 'curious'
+    ? `What you actually need to buy in your first 6 to 12 months of training. Required items are needed on day one or shortly after; optional items are school-dependent or come later.`
+    : lvl === 'familiar'
+    ? `Beginner gear list with realistic price ranges. Required items are session-one essentials; soon items are needed within the first month or two; optional items are school-dependent.`
+    : `Beginner-tier gear. Brand-tier hints noted where the upgrade is meaningful versus marketing. Tier classification gates priority of purchase.`;
+
+  let html = `<div class="gs-kicker">Gear</div><h4>What you will need to buy</h4><p class="gs-deck">${deck}</p>`;
+
+  // Startup cost callout
+  html += `<p class="gs-total">Required gear to start: <strong>${startupRange}</strong>. Soon-tier items add roughly the same again over the first months. Optional items vary widely.</p>`;
+
+  html += `<div class="gs-list">`;
+
+  list.forEach(item => {
+    const desc = item[lvl] || item.familiar || item.novice || '';
+    const tierLabel = item.tier === 'required' ? 'Required'
+      : item.tier === 'soon' ? 'Needed soon'
+      : 'Optional';
+    const tierClass = `gs-tier-${item.tier}`;
+    html += `<div class="gs-item"><div class="gs-name">${item.name}<span class="gs-tier ${tierClass}">${tierLabel}</span></div><div class="gs-price">${item.price}</div><p class="gs-desc">${desc}</p></div>`;
+  });
+
+  html += `</div>`;
+  c.innerHTML = html;
+}
+
+function renderOverlayDropdown() {
+  const sel = document.getElementById('overlay-art');
+  const current = sel.value;
+  sel.innerHTML = '';
+  const blank = document.createElement('option');
+  blank.value = '';
+  blank.textContent = 'none';
+  sel.appendChild(blank);
+  arts.forEach(a => {
+    if (a.key === featuredArt) return;
+    const opt = document.createElement('option');
+    opt.value = a.key;
+    opt.textContent = a.label;
+    sel.appendChild(opt);
+  });
+  sel.value = current && current !== featuredArt ? current : '';
+  overlayArt = sel.value;
+}
+
+function renderFootnotes() {
+  const c = document.getElementById('footnotes-block');
+  if (!c) return;
+  // Walk the cells data to find which (art, dim) pairs have footnotes
+  const found = [];
+  arts.forEach(art => {
+    cells[art.key].forEach((cell, dIdx) => {
+      if (cell[2] && footnotes[cell[2]]) {
+        found.push({ art: art.label, dim: dimensions[dIdx].label, fn: footnotes[cell[2]] });
+      }
+    });
+  });
+  if (found.length === 0) { c.innerHTML = ''; return; }
+  let html = '<div style="font-family: var(--font-sans); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); font-weight: 700; margin-bottom: 8px;">Cell footnotes</div>';
+  found.forEach(f => {
+    html += `<div class="fn-row"><span class="fn-mk">${f.fn.marker}</span><span class="fn-cell-id">${f.art} · ${f.dim}</span><span>${f.fn.text}</span></div>`;
+  });
+  c.innerHTML = html;
+}
+
+// ============================================================================
+// GALLERY: replace these SVG illustrations with photographs by editing each
+// art's `svg` field below. Example:
+//
+//   'Taekwondo': {
+//     pose: 'High roundhouse kick',
+//     svg: '<img src="images/taekwondo.jpg" alt="Taekwondo" style="width:100%; height:100%; object-fit:cover;">'
+//   },
+//
+// The container is a 1:1 aspect-ratio square; object-fit:cover crops any
+// photo to fit uniformly. Use photos from a single curated batch for best
+// visual consistency (similar era, framing, and lighting).
+// ============================================================================
+// Gallery: stylized SVG illustrations representing a signature pose per art.
+// All use the same visual language: same stroke width, same color, same canvas size, same figure style.
+const galleryIcons = {
+  'Taekwondo': { pose: 'High roundhouse kick', svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="42" cy="22" r="6"/><path d="M42 28 L42 52 L36 78 L40 90"/><path d="M42 35 L60 28"/><path d="M42 35 L28 42"/><path d="M42 52 L80 18"/><circle cx="80" cy="18" r="3" fill="currentColor"/></svg>` },
+  'Karate': { pose: 'Front stance, reverse punch', svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="22" r="6"/><path d="M50 28 L50 58"/><path d="M50 38 L26 38"/><circle cx="26" cy="38" r="3" fill="currentColor"/><path d="M50 38 L80 38"/><circle cx="80" cy="38" r="3" fill="currentColor"/><path d="M50 58 L36 88"/><path d="M50 58 L66 88"/></svg>` },
+  'Judo': { pose: 'Seoi-nage shoulder throw', svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="36" cy="40" r="6"/><path d="M36 46 L36 70 L30 86"/><path d="M36 46 L42 70 L46 86"/><path d="M36 50 L52 38"/><circle cx="64" cy="22" r="5"/><path d="M58 26 L72 24 L82 32"/><path d="M52 38 L74 30"/></svg>` },
+  'BJJ': { pose: 'Closed guard', svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="22" cy="50" r="6"/><path d="M28 50 L52 50"/><path d="M52 50 L72 32"/><path d="M52 50 L72 68"/><circle cx="78" cy="50" r="6"/><path d="M72 50 L60 38"/><path d="M72 50 L60 62"/><path d="M28 50 L46 56"/><path d="M28 50 L46 44"/></svg>` },
+  'Muay Thai': { pose: 'Clinch with knee strike', svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="38" cy="22" r="6"/><circle cx="62" cy="22" r="6"/><path d="M38 28 L38 50"/><path d="M62 28 L62 50"/><path d="M38 32 L56 30"/><path d="M62 32 L44 30"/><path d="M38 50 L34 78"/><path d="M62 50 L50 64 L52 78"/><path d="M38 50 L50 58"/></svg>` },
+  'Boxing': { pose: 'Guard, throwing cross', svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="42" cy="24" r="6"/><path d="M42 30 L42 60"/><path d="M42 38 L82 28"/><circle cx="82" cy="28" r="4" fill="currentColor"/><path d="M42 40 L34 50"/><circle cx="34" cy="50" r="4" fill="currentColor"/><path d="M42 60 L34 88"/><path d="M42 60 L52 88"/></svg>` },
+  'Wrestling': { pose: 'Double-leg shot', svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="60" r="6"/><path d="M26 60 L52 50"/><path d="M52 50 L62 60 L62 76"/><path d="M52 50 L66 38"/><circle cx="72" cy="34" r="5"/><path d="M62 76 L56 86"/><path d="M62 76 L70 86"/><path d="M26 60 L40 70"/><path d="M40 70 L50 78"/></svg>` },
+  'Kung Fu': { pose: 'Horse stance, palm strike', svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="22" r="6"/><path d="M50 28 L50 56"/><path d="M50 36 L80 36"/><path d="M78 32 L86 36 L78 40"/><path d="M50 36 L34 44"/><path d="M50 56 L26 80"/><path d="M50 56 L74 80"/><path d="M22 80 L34 80"/><path d="M70 80 L82 80"/></svg>` },
+  'Aikido': { pose: 'Irimi-nage redirection', svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="34" cy="32" r="6"/><path d="M34 38 L34 64 L26 86"/><path d="M34 38 L40 64 L46 86"/><path d="M34 44 L58 32"/><circle cx="68" cy="56" r="6"/><path d="M62 50 L72 28"/><path d="M68 62 L78 80"/><path d="M68 62 L58 84"/></svg>` },
+  'Krav Maga': { pose: 'Knife defense', svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="68" cy="22" r="6"/><path d="M68 28 L68 60 L60 86"/><path d="M68 28 L68 60 L76 86"/><path d="M68 36 L48 30"/><path d="M48 30 L40 22 L34 14"/><path d="M30 18 L36 12 L42 18"/><circle cx="22" cy="40" r="6"/><path d="M28 40 L46 40"/><path d="M22 46 L18 80"/></svg>` },
+  'MMA': { pose: 'Mount with strikes', svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="60" r="6"/><path d="M26 60 L70 60"/><path d="M70 60 L82 56"/><path d="M70 60 L82 64"/><circle cx="50" cy="28" r="6"/><path d="M50 34 L50 56"/><path d="M50 38 L36 50"/><circle cx="32" cy="54" r="4" fill="currentColor"/><path d="M50 38 L66 24"/><path d="M50 56 L40 56"/><path d="M50 56 L60 56"/></svg>` },
+};
+
+function renderGallery() {
+  const c = document.getElementById('gallery');
+  if (!c) return;
+  let html = '';
+  arts.forEach(art => {
+    const icon = galleryIcons[art.key];
+    if (!icon) return;
+    html += `<div class="gallery-card" data-art="${art.key}" style="color: var(--accent);">
+      <div class="gallery-svg">${icon.svg}</div>
+      <div class="gallery-meta">
+        <div class="gallery-name">${art.label}</div>
+        <div class="gallery-pose">${icon.pose}</div>
+      </div>
+    </div>`;
+  });
+  c.innerHTML = html;
+}
+
+function renderRubrics() {
+  const c = document.getElementById('rubrics-content');
+  let html = '';
+  dimensions.forEach(dim => {
+    html += `<div style="margin-bottom: 24px;"><div style="font-family: var(--font-sans); font-size: 11px; color: var(--text-3); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600;">${dim.num}</div><div style="font-family: var(--font-serif); font-size: 18px; font-weight: 500; margin-bottom: 4px;">${dim.label}</div><div style="font-family: var(--font-serif); font-style: italic; color: var(--text-2); font-size: 14px; margin-bottom: 8px;">${dim.desc}</div>`;
+    html += `<table class="rubric-table"><thead><tr><th>Score</th><th>Rule</th></tr></thead><tbody>`;
+    dim.rubric.forEach(([score, rule]) => {
+      html += `<tr><td>${score}</td><td>${rule}</td></tr>`;
+    });
+    html += `</tbody></table></div>`;
+  });
+  c.innerHTML = html;
+}
+
+function init() {
+  document.getElementById('featured-art').addEventListener('change', e => {
+    featuredArt = e.target.value;
+    updateFeatured();
+    renderMatrix();
+  });
+
+  document.getElementById('overlay-art').addEventListener('change', e => {
+    overlayArt = e.target.value;
+    buildRadar();
+    renderMatrix();
+  });
+
+  document.getElementById('knowledge-level').addEventListener('change', e => {
+    knowledgeLevel = e.target.value;
+    updateFeatured();
+  });
+
+  document.querySelectorAll('#sort-presets button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#sort-presets button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sortKey = btn.dataset.sort;
+      renderMatrix();
+    });
+  });
+
+  document.getElementById('toggle-numbers').addEventListener('click', e => {
+    showNumbers = !showNumbers;
+    e.target.classList.toggle('active', showNumbers);
+    e.target.textContent = showNumbers ? 'show scores' : 'heatmap only';
+    renderMatrix();
+  });
+
+  renderRubrics();
+  renderFootnotes();
+  renderColgroup();
+  renderMatrix();
+  renderGallery();
+  updateFeatured();
+}
+init();
+</script>
+
+</body>
+</html>

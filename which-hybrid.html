@@ -1,0 +1,1535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Which Hybrid? A little decision helper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1F3A5F;
+  --navy-deep:#152843;
+  --amber:#D4843A;
+  --amber-soft:#E5A86A;
+  --sage:#8FA68E;
+  --sage-deep:#5E7A60;
+  --rose:#B85042;
+  --cream:#FAF6EE;
+  --paper:#FFFCF5;
+  --ink:#1A1A1A;
+  --muted:#5C6770;
+  --line:#E5DFD2;
+  --line-soft:#EFE9DC;
+  --shadow:0 1px 2px rgba(21,40,67,.04), 0 8px 24px rgba(21,40,67,.06);
+  --shadow-lift:0 2px 4px rgba(21,40,67,.06), 0 24px 48px rgba(21,40,67,.10);
+  --display:'Fraunces', Georgia, 'Times New Roman', serif;
+  --body:'Inter Tight', -apple-system, system-ui, sans-serif;
+  --mono:'JetBrains Mono', ui-monospace, monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);
+  font-size:17px;
+  line-height:1.55;
+  color:var(--ink);
+  background:var(--cream);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+@media (max-width:640px){ body{font-size:16px} }
+
+/* ---------- HERO ---------- */
+.hero{
+  background:var(--navy);
+  color:#fff;
+  padding:72px 24px 96px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    radial-gradient(800px 300px at 80% -10%, rgba(212,132,58,.18), transparent 60%),
+    radial-gradient(600px 400px at -10% 120%, rgba(143,166,142,.12), transparent 60%);
+  pointer-events:none;
+}
+.hero-inner{max-width:1100px;margin:0 auto;position:relative}
+.eyebrow{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--amber-soft);
+  margin-bottom:20px;
+  font-weight:500;
+}
+h1{
+  font-family:var(--display);
+  font-weight:500;
+  font-size:clamp(36px, 6vw, 68px);
+  line-height:1.02;
+  letter-spacing:-.02em;
+  margin-bottom:16px;
+  font-variation-settings:"opsz" 144;
+}
+h1 em{
+  font-style:italic;
+  color:var(--amber-soft);
+  font-weight:400;
+}
+.subtitle{
+  font-size:clamp(16px, 1.6vw, 19px);
+  color:#CADCFC;
+  max-width:640px;
+  line-height:1.55;
+  margin-bottom:8px;
+}
+.signature{
+  margin-top:36px;
+  font-family:var(--mono);
+  font-size:12px;
+  color:#8FA6C9;
+  letter-spacing:.04em;
+}
+.signature::before{
+  content:"";
+  display:block;
+  width:36px;
+  height:2px;
+  background:var(--amber);
+  margin-bottom:14px;
+}
+
+/* ---------- SECTIONS ---------- */
+section{padding:80px 24px;position:relative}
+.wrap{max-width:1100px;margin:0 auto}
+.section-head{margin-bottom:48px;max-width:720px}
+.section-eyebrow{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--amber);
+  margin-bottom:14px;
+  font-weight:500;
+}
+h2{
+  font-family:var(--display);
+  font-weight:500;
+  font-size:clamp(30px, 4vw, 44px);
+  line-height:1.05;
+  letter-spacing:-.015em;
+  color:var(--navy);
+  margin-bottom:14px;
+  font-variation-settings:"opsz" 96;
+}
+h2 em{font-style:italic;color:var(--amber);font-weight:400}
+.section-lede{font-size:17px;color:var(--muted);line-height:1.6}
+
+/* ---------- CARS GRID (intro section) ---------- */
+.cars-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:18px;
+}
+@media (max-width:980px){ .cars-grid{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:520px){ .cars-grid{grid-template-columns:1fr} }
+
+.car-card{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:6px;
+  position:relative;
+  transition:transform .25s ease, box-shadow .25s ease;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.car-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift)}
+.car-photo{
+  aspect-ratio: 2 / 1;
+  overflow:hidden;
+  background:var(--line-soft);
+}
+.car-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.car-card-body{
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  flex:1;
+}
+.car-tag{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  font-weight:500;
+  margin-bottom:12px;
+}
+.car-name{
+  font-family:var(--display);
+  font-size:22px;
+  font-weight:600;
+  line-height:1.15;
+  color:var(--navy);
+  margin-bottom:14px;
+  font-variation-settings:"opsz" 36;
+}
+.car-stat{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  margin-bottom:18px;
+}
+.car-mpg{
+  font-family:var(--display);
+  font-size:42px;
+  font-weight:600;
+  line-height:1;
+  letter-spacing:-.02em;
+}
+.car-mpg-unit{font-size:13px;color:var(--muted)}
+.car-blurb{font-size:14px;line-height:1.55;color:var(--ink);margin-bottom:14px}
+.car-safety{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  padding:10px 12px;
+  margin-bottom:14px;
+  background:var(--cream);
+  border-radius:4px;
+  border-left:3px solid var(--line);
+}
+.safety-pill{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.08em;
+  font-weight:600;
+  color:var(--navy);
+}
+.safety-detail{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.4;
+}
+.car-safety:has(.safety-best){ border-left-color:var(--sage-deep) }
+.car-safety:has(.safety-good){ border-left-color:#8FA68E }
+.car-safety:has(.safety-ok){ border-left-color:#D5C5A0 }
+.safety-best{ color:var(--sage-deep) }
+.safety-good{ color:var(--navy) }
+.safety-ok{ color:#A07530 }
+.car-meta{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--muted);
+  padding-top:14px;
+  border-top:1px solid var(--line-soft);
+  display:flex;
+  justify-content:space-between;
+  margin-top:auto;
+}
+.tag-forester{color:var(--sage-deep)}
+.tag-crv{color:var(--navy)}
+.tag-rav4{color:var(--amber)}
+.tag-cross{color:var(--rose)}
+
+/* ---------- TOOL SECTION ---------- */
+.tool-bg{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.tool-grid{
+  display:grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap:48px;
+  align-items:start;
+}
+@media (max-width:980px){ .tool-grid{grid-template-columns:1fr;gap:32px} }
+
+.preset-bar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:28px;
+  justify-content:flex-end;
+}
+.preset-btn{
+  font-family:var(--body);
+  font-size:13px;
+  font-weight:500;
+  border:1px solid var(--line);
+  background:var(--paper);
+  color:var(--navy);
+  padding:8px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.preset-btn:hover{background:var(--cream);border-color:var(--navy)}
+.preset-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.preset-btn .hint{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:6px}
+.preset-btn.active .hint{color:#CADCFC}
+
+/* Reset is an action, not a state — distinct styling */
+.preset-btn-reset{
+  background:transparent;
+  border-color:var(--muted);
+  color:var(--muted);
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.04em;
+}
+.preset-btn-reset:hover{
+  background:var(--navy);
+  border-color:var(--navy);
+  color:var(--paper);
+}
+.preset-btn-reset.active{
+  /* Don't show "active" state on reset — it's an action, not a stateful selection */
+  background:transparent;
+  border-color:var(--muted);
+  color:var(--muted);
+}
+
+/* sliders */
+.sliders{display:flex;flex-direction:column;gap:14px}
+
+.slider-section-head{
+  margin-top:14px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--line);
+}
+.slider-section-head:first-child{margin-top:0}
+.slider-section-eyebrow{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--amber);
+  margin-bottom:4px;
+  font-weight:500;
+}
+.slider-section-title{
+  font-family:var(--display);
+  font-size:20px;
+  font-weight:600;
+  color:var(--navy);
+  letter-spacing:-.005em;
+}
+
+.slider-row{
+  background:var(--cream);
+  border:1px solid var(--line-soft);
+  border-radius:6px;
+  padding:14px 16px 12px;
+}
+.slider-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  margin-bottom:6px;
+  gap:12px;
+}
+.slider-label{
+  font-weight:600;
+  font-size:14px;
+  color:var(--navy);
+}
+.slider-help{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:12px;
+  line-height:1.45;
+}
+.slider-value{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--navy);
+  letter-spacing:.04em;
+  font-weight:600;
+  text-align:right;
+  flex-shrink:0;
+}
+.slider-track-wrap{
+  position:relative;
+  padding:0 0 22px;
+}
+input[type=range]{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:6px;
+  background:linear-gradient(to right, var(--amber) 0%, var(--amber) var(--pct,50%), var(--line) var(--pct,50%), var(--line) 100%);
+  border-radius:3px;
+  outline:none;
+  cursor:pointer;
+  position:relative;
+  z-index:2;
+  margin:0;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:22px;height:22px;
+  border-radius:50%;
+  background:var(--navy);
+  border:3px solid var(--paper);
+  box-shadow:0 1px 4px rgba(0,0,0,.2);
+  cursor:grab;
+  transition:transform .1s ease;
+}
+input[type=range]::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{
+  width:22px;height:22px;
+  border-radius:50%;
+  background:var(--navy);
+  border:3px solid var(--paper);
+  cursor:grab;
+}
+
+/* tick marks under the slider */
+.slider-ticks{
+  position:absolute;
+  left:0;right:0;
+  top:14px;
+  display:flex;
+  justify-content:space-between;
+  pointer-events:none;
+  padding:0 8px; /* aligns with thumb width */
+  font-family:var(--mono);
+  font-size:10px;
+  color:var(--muted);
+}
+.slider-ticks span{
+  width:4px;
+  text-align:center;
+  position:relative;
+}
+.slider-ticks span::before{
+  content:"";
+  position:absolute;
+  top:-9px;
+  left:50%;
+  transform:translateX(-50%);
+  width:1px;
+  height:5px;
+  background:var(--line);
+}
+/* axis labels (Not at all... Super important) */
+.slider-axis{
+  display:flex;
+  justify-content:space-between;
+  font-size:10px;
+  color:var(--muted);
+  font-style:italic;
+  margin-top:18px;
+  position:absolute;
+  left:0;right:0;
+  bottom:-2px;
+}
+
+/* RESULT PANEL */
+.result-panel{
+  position:sticky;
+  top:24px;
+}
+@media (max-width:980px){ .result-panel{position:static} }
+
+/* ---------- BALANCE VISUALIZATION ---------- */
+.balance-vis{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:24px;
+  margin-bottom:18px;
+  box-shadow:var(--shadow);
+}
+.balance-eyebrow{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--amber);
+  margin-bottom:18px;
+  font-weight:500;
+  text-align:center;
+}
+.balance-stage{
+  position:relative;
+  width:100%;
+  aspect-ratio:1/1;
+  background:
+    radial-gradient(ellipse at center, var(--cream) 0%, var(--cream) 50%, transparent 70%),
+    var(--paper);
+  border-radius:6px;
+  /* dashed cross-hairs to mark axes */
+  background-image:
+    linear-gradient(var(--line-soft), var(--line-soft)),
+    linear-gradient(var(--line-soft), var(--line-soft));
+  background-size: 1px 100%, 100% 1px;
+  background-position: center center, center center;
+  background-repeat: no-repeat;
+}
+.balance-svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:1;
+}
+.pull-line{
+  stroke:var(--navy);
+  stroke-width:1;
+  opacity:.12;
+  transition:stroke-width .35s cubic-bezier(.2,.8,.2,1), opacity .35s ease;
+}
+.pull-line.leader{
+  stroke:var(--amber);
+  stroke-width:2.5;
+  opacity:.7;
+}
+
+/* axis labels at corners */
+.balance-axis-label{
+  position:absolute;
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:.12em;
+  color:var(--muted);
+  font-weight:500;
+  pointer-events:none;
+  z-index:1;
+}
+.balance-axis-tl{ top:6px;    left:6px;  }
+.balance-axis-tr{ top:6px;    right:6px; text-align:right;}
+.balance-axis-bl{ bottom:6px; left:6px;  }
+.balance-axis-br{ bottom:6px; right:6px; text-align:right;}
+
+/* car nodes at fixed corners */
+.car-node{
+  position:absolute;
+  width:88px;
+  height:88px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-family:var(--display);
+  font-size:13px;
+  font-weight:600;
+  color:#fff;
+  z-index:2;
+  transform:translate(-50%, -50%);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, scale .35s ease;
+  box-shadow:0 2px 6px rgba(21,40,67,.12);
+  padding:6px;
+  line-height:1.1;
+  cursor:default;
+}
+.car-node.leader{
+  scale:1.12;
+  box-shadow:0 4px 16px rgba(212,132,58,.4), 0 0 0 3px var(--amber);
+}
+.car-node-name{
+  pointer-events:none;
+}
+/* corner positions: 16% from each edge so they sit visually inside */
+.car-node-forester{ top:16%; left:16%;  background:var(--sage-deep); }
+.car-node-crv{      top:16%; left:84%;  background:var(--navy); }
+.car-node-cross{    top:84%; left:16%;  background:var(--rose); }
+.car-node-rav4{     top:84%; left:84%;  background:var(--amber); }
+
+/* the marker (weighted center of mass) */
+.balance-marker{
+  position:absolute;
+  top:50%; left:50%;
+  width:24px; height:24px;
+  transform:translate(-50%, -50%);
+  pointer-events:none;
+  z-index:3;
+  transition:top .55s cubic-bezier(.2,.8,.2,1), left .55s cubic-bezier(.2,.8,.2,1);
+}
+.balance-marker-dot{
+  position:absolute;
+  inset:0;
+  background:var(--ink);
+  border:3px solid var(--paper);
+  border-radius:50%;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+}
+.balance-marker-pulse{
+  position:absolute;
+  inset:-8px;
+  border-radius:50%;
+  background:var(--amber);
+  opacity:.25;
+  animation:pulse 2.4s ease-out infinite;
+}
+@keyframes pulse{
+  0%   { transform:scale(0.7); opacity:.3; }
+  70%  { transform:scale(1.6); opacity:0; }
+  100% { transform:scale(1.6); opacity:0; }
+}
+
+.balance-caption{
+  margin-top:14px;
+  font-size:12px;
+  color:var(--muted);
+  text-align:center;
+  font-style:italic;
+  line-height:1.5;
+}
+
+/* on smaller widths, the vis can shrink */
+@media (max-width:520px){
+  .car-node{ width:68px; height:68px; font-size:10px; padding:4px; }
+  .balance-axis-label{
+    font-size:7.5px;
+    letter-spacing:.08em;
+    max-width:42%;
+  }
+  .balance-axis-tl, .balance-axis-bl { left:4px; }
+  .balance-axis-tr, .balance-axis-br { right:4px; }
+  .balance-axis-tl, .balance-axis-tr { top:4px; }
+  .balance-axis-bl, .balance-axis-br { bottom:4px; }
+}
+
+.winner-card{
+  background:var(--navy);
+  color:#fff;
+  border-radius:8px;
+  padding:32px 28px;
+  position:relative;
+  overflow:hidden;
+  margin-bottom:18px;
+  box-shadow:var(--shadow-lift);
+}
+.winner-card::before{
+  content:"";
+  position:absolute;inset:0;
+  background:radial-gradient(400px 200px at 90% 0%, rgba(212,132,58,.22), transparent 70%);
+  pointer-events:none;
+}
+.winner-eyebrow{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--amber-soft);
+  margin-bottom:10px;
+  position:relative;
+}
+.winner-name{
+  font-family:var(--display);
+  font-size:34px;
+  font-weight:600;
+  line-height:1.05;
+  letter-spacing:-.015em;
+  margin-bottom:14px;
+  position:relative;
+  font-variation-settings:"opsz" 60;
+}
+.winner-rationale{
+  font-size:15px;
+  line-height:1.55;
+  color:#CADCFC;
+  position:relative;
+  font-style:italic;
+}
+
+/* ranked bars */
+.ranking-list{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:18px 20px;
+}
+.rank-row{
+  display:grid;
+  grid-template-columns: 22px 1fr;
+  gap:12px;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid var(--line-soft);
+}
+.rank-row:last-child{border-bottom:none}
+.rank-num{
+  font-family:var(--display);
+  font-size:22px;
+  font-weight:500;
+  color:var(--muted);
+  font-variation-settings:"opsz" 36;
+}
+.rank-row.top .rank-num{color:var(--amber)}
+.rank-body{display:flex;flex-direction:column;gap:6px}
+.rank-name-line{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+}
+.rank-name{font-weight:600;font-size:14px;color:var(--navy)}
+.rank-score{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--muted);
+}
+.rank-bar{
+  height:6px;
+  background:var(--line-soft);
+  border-radius:3px;
+  overflow:hidden;
+  position:relative;
+}
+.rank-bar-fill{
+  position:absolute;left:0;top:0;bottom:0;
+  border-radius:3px;
+  transition:width .4s cubic-bezier(.2,.8,.2,1), background .3s ease;
+}
+.rank-row.top .rank-bar-fill{background:var(--amber)}
+.rank-row:not(.top) .rank-bar-fill{background:var(--sage)}
+
+/* ---------- BREAKDOWN TABLE ---------- */
+.breakdown-section{padding:80px 24px;background:var(--cream)}
+.breakdown-table{
+  width:100%;
+  border-collapse:collapse;
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:6px;
+  overflow:hidden;
+  font-size:14px;
+}
+.breakdown-table thead{background:var(--navy);color:#fff}
+.breakdown-table th{
+  padding:14px 12px;
+  text-align:left;
+  font-family:var(--body);
+  font-weight:600;
+  font-size:12px;
+  letter-spacing:.04em;
+}
+.breakdown-table th.num{text-align:center}
+.breakdown-table td{
+  padding:12px;
+  border-top:1px solid var(--line-soft);
+  vertical-align:middle;
+}
+.breakdown-table td.num{text-align:center;font-family:var(--mono);font-size:13px}
+.breakdown-table td.dim{font-weight:600;color:var(--navy)}
+.breakdown-table td .source{
+  display:block;
+  font-size:11px;
+  color:var(--muted);
+  margin-top:2px;
+  font-weight:400;
+}
+.score-cell{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;height:28px;
+  border-radius:4px;
+  font-weight:600;
+  font-family:var(--mono);
+  font-size:12px;
+}
+.score-10{background:#2C5F2D;color:#fff}
+.score-9{background:#487A4A;color:#fff}
+.score-8{background:#6A9A6C;color:#fff}
+.score-7{background:#8FA68E;color:#fff}
+.score-6{background:#B5BFA9;color:var(--ink)}
+.score-5{background:#D5C5A0;color:var(--ink)}
+.score-4{background:#E5A86A;color:#fff}
+.score-3{background:#D4843A;color:#fff}
+.score-2{background:#B85042;color:#fff}
+.score-1{background:#7B2D24;color:#fff}
+
+/* responsive table */
+@media (max-width:780px){
+  .breakdown-table{font-size:13px}
+  .breakdown-table .source{display:none}
+  .breakdown-table td,.breakdown-table th{padding:10px 8px}
+}
+
+/* safety row — visually distinct since it's not a slider */
+.breakdown-table .safety-row{
+  background:linear-gradient(to right, rgba(212,132,58,.06), rgba(212,132,58,.02));
+  border-top:2px solid var(--amber);
+}
+.breakdown-table .safety-row .dim{
+  color:var(--navy);
+}
+.dim-flag{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-weight:500;
+  color:var(--amber);
+  background:var(--paper);
+  border:1px solid var(--amber);
+  padding:2px 6px;
+  border-radius:3px;
+  margin-bottom:6px;
+  margin-right:8px;
+}
+
+/* ---------- LEARN CARDS ---------- */
+.learn-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:24px;
+  margin-top:32px;
+}
+@media (max-width:780px){ .learn-grid{grid-template-columns:1fr} }
+.learn-card{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:28px;
+}
+.learn-card h3{
+  font-family:var(--display);
+  font-size:22px;
+  font-weight:600;
+  color:var(--navy);
+  margin-bottom:12px;
+  letter-spacing:-.005em;
+}
+.learn-card p{font-size:15px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.learn-card p:last-child{margin-bottom:0}
+.learn-card strong{color:var(--navy);font-weight:600}
+
+/* ---------- FOOTER ---------- */
+footer{
+  background:var(--navy-deep);
+  color:#8FA6C9;
+  padding:48px 24px 56px;
+  text-align:center;
+  font-size:13px;
+  line-height:1.6;
+}
+footer .sig{
+  font-family:var(--display);
+  font-style:italic;
+  font-size:18px;
+  color:#CADCFC;
+  margin-bottom:8px;
+}
+
+/* ---------- A11Y & FOCUS ---------- */
+input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4px}
+.preset-btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+/* small */
+.small{font-size:12px;color:var(--muted);font-style:italic}
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">From Matt · With love</div>
+    <h1>Which hybrid<br>is right for <em>you</em>?</h1>
+    <p class="subtitle">Four hybrid SUVs walk into a parking lot. Which one comes home with you depends on what you actually care about. Move the sliders. Watch the tool argue with itself. The car that wins is the one that fits <em>your</em> life, not somebody else's idea of what you should want.</p>
+    <div class="signature">Built for one decision. Yours.</div>
+  </div>
+</header>
+
+<!-- ============ MEET THE FOUR ============ -->
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">Meet the four</div>
+      <h2>The lineup</h2>
+      <p class="section-lede">All four are gas-electric hybrids, which means none of them plug in. You just put gas in like a regular car, and they politely sip less of it than they would have otherwise. That's the magic trick.</p>
+    </div>
+
+    <div class="cars-grid">
+      <article class="car-card">
+        <div class="car-photo"><img src="img/forester.svg" alt="Subaru Forester Hybrid"/></div>
+        <div class="car-card-body">
+          <div class="car-tag tag-forester">The Kayak Rack</div>
+          <div class="car-name">Subaru Forester Hybrid</div>
+          <div class="car-stat"><span class="car-mpg">35</span><span class="car-mpg-unit">mpg combined</span></div>
+          <p class="car-blurb">The one your neighbor with the kayak rack drives. Tall windows you can actually see out of, full-time all-wheel drive that doesn't need to be coaxed into action, and physical buttons that don't make you hunt for them.</p>
+          <div class="car-safety">
+            <span class="safety-pill safety-best">IIHS Top Safety Pick+</span>
+            <span class="safety-detail">Subaru EyeSight driver assist</span>
+          </div>
+          <div class="car-meta"><span>~$36k</span><span>NEW for 2026</span></div>
+        </div>
+      </article>
+
+      <article class="car-card">
+        <div class="car-photo"><img src="img/crv.svg" alt="Honda CR-V Hybrid"/></div>
+        <div class="car-card-body">
+          <div class="car-tag tag-crv">The Velvet Glove</div>
+          <div class="car-name">Honda CR-V Hybrid</div>
+          <div class="car-stat"><span class="car-mpg">37</span><span class="car-mpg-unit">mpg combined</span></div>
+          <p class="car-blurb">Quiet, smooth, and grown-up. Like a really good pair of broken-in loafers. The biggest cargo hold of the four for hauling whatever the day demands. Just know that all-wheel drive is optional, not standard, so you have to actually ask for it.</p>
+          <div class="car-safety">
+            <span class="safety-pill safety-good">IIHS rating: Acceptable</span>
+            <span class="safety-detail">Honda Sensing driver assist</span>
+          </div>
+          <div class="car-meta"><span>~$36k</span><span>Proven platform</span></div>
+        </div>
+      </article>
+
+      <article class="car-card">
+        <div class="car-photo"><img src="img/rav4.svg" alt="Toyota RAV4 Hybrid"/></div>
+        <div class="car-card-body">
+          <div class="car-tag tag-rav4">The Bestseller</div>
+          <div class="car-name">Toyota RAV4 Hybrid</div>
+          <div class="car-stat"><span class="car-mpg">39</span><span class="car-mpg-unit">mpg combined</span></div>
+          <p class="car-blurb">America's bestselling SUV, freshly redesigned for 2026 and now hybrid-only. Toyota's hybrid hardware has decades of bulletproof history. The catch: this exact version is brand-new, so the usual "Toyota = boring reliable" story has an asterisk on it for one year.</p>
+          <div class="car-safety">
+            <span class="safety-pill safety-best">IIHS Top Safety Pick+</span>
+            <span class="safety-detail">Toyota Safety Sense 4.0</span>
+          </div>
+          <div class="car-meta"><span>~$33k</span><span>NEW for 2026</span></div>
+        </div>
+      </article>
+
+      <article class="car-card">
+        <div class="car-photo"><img src="img/cross.svg" alt="Toyota Corolla Cross Hybrid"/></div>
+        <div class="car-card-body">
+          <div class="car-tag tag-cross">The Lean Machine</div>
+          <div class="car-name">Toyota Corolla Cross Hybrid</div>
+          <div class="car-stat"><span class="car-mpg">42</span><span class="car-mpg-unit">mpg combined</span></div>
+          <p class="car-blurb">The compact one. Slips into parking spots the others sigh at, sips gas like it's expensive, and asks very little of you in maintenance. Cozy inside rather than spacious, so it's most at home with one or two people.</p>
+          <div class="car-safety">
+            <span class="safety-pill safety-ok">IIHS Top Safety Pick</span>
+            <span class="safety-detail">Toyota Safety Sense</span>
+          </div>
+          <div class="car-meta"><span>~$31k</span><span>Proven platform</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE TOOL ============ -->
+<section class="tool-bg" id="tool">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">The tool</div>
+      <h2>What matters to <em>you</em>?</h2>
+      <p class="section-lede">Move each slider from 1 to 5 based on how much that thing actually matters to you. <strong>1 means "couldn't care less"</strong> and <strong>5 means "this is the whole reason I'm buying a car."</strong> The recommendation on the right updates as you go.</p>
+      <p class="section-lede" style="margin-top:10px;font-size:14px;font-style:italic">Safety isn't on the sliders. It's baked into the result. A less safe car is always penalized, regardless of how you weigh things below.</p>
+    </div>
+
+    <div class="preset-bar">
+      <button class="preset-btn preset-btn-reset" data-preset="balanced" aria-label="Reset all sliders to 3">↺ Reset all to 3</button>
+    </div>
+
+    <div class="tool-grid">
+      <div class="sliders" id="sliders"></div>
+
+      <div class="result-panel">
+        <!-- 2D visualization: cars in corners, marker shows weighted balance -->
+        <div class="balance-vis" id="balanceVis">
+          <div class="balance-eyebrow">Where you're leaning</div>
+          <div class="balance-stage" id="balanceStage" aria-label="Visual balance of your priorities across the four cars">
+            <!-- corner labels (axes) -->
+            <div class="balance-axis-label balance-axis-tl">PRACTICAL · RUGGED</div>
+            <div class="balance-axis-label balance-axis-tr">REFINED · COMFORTABLE</div>
+            <div class="balance-axis-label balance-axis-bl">COMPACT · FRUGAL</div>
+            <div class="balance-axis-label balance-axis-br">POPULAR · WELL-ROUNDED</div>
+
+            <!-- pull lines (drawn behind cars) -->
+            <svg class="balance-svg" viewBox="0 0 400 400" preserveAspectRatio="none" aria-hidden="true">
+              <line id="pull-forester" class="pull-line" x1="200" y1="200" x2="64" y2="64"/>
+              <line id="pull-crv"      class="pull-line" x1="200" y1="200" x2="336" y2="64"/>
+              <line id="pull-cross"    class="pull-line" x1="200" y1="200" x2="64" y2="336"/>
+              <line id="pull-rav4"     class="pull-line" x1="200" y1="200" x2="336" y2="336"/>
+            </svg>
+
+            <!-- car nodes at corners -->
+            <div class="car-node car-node-forester" id="node-forester" data-car="forester">
+              <div class="car-node-name">Forester</div>
+            </div>
+            <div class="car-node car-node-crv" id="node-crv" data-car="crv">
+              <div class="car-node-name">CR-V</div>
+            </div>
+            <div class="car-node car-node-cross" id="node-cross" data-car="cross">
+              <div class="car-node-name">Corolla Cross</div>
+            </div>
+            <div class="car-node car-node-rav4" id="node-rav4" data-car="rav4">
+              <div class="car-node-name">RAV4</div>
+            </div>
+
+            <!-- the marker -->
+            <div class="balance-marker" id="balanceMarker" aria-hidden="true">
+              <div class="balance-marker-pulse"></div>
+              <div class="balance-marker-dot"></div>
+            </div>
+          </div>
+          <div class="balance-caption">
+            The dot shows where your priorities are pulling. Move the sliders to watch it shift.
+          </div>
+        </div>
+
+        <div class="winner-card" id="winnerCard">
+          <div class="winner-eyebrow" id="winnerEyebrow">Top match</div>
+          <div class="winner-name" id="winnerName">Loading...</div>
+          <div class="winner-rationale" id="winnerRationale">Move a slider to see your match.</div>
+        </div>
+
+        <div class="ranking-list" id="rankingList"></div>
+
+        <p class="small" style="margin-top:14px;text-align:center">Based on a weighted average of your priorities. Higher slider value = that dimension counts more.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BREAKDOWN ============ -->
+<section class="breakdown-section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">The receipts</div>
+      <h2>How each car was scored</h2>
+      <p class="section-lede">Every score below is on a 0-10 scale, and there's a short note on where the score came from. Look here when you're trying to figure out why the tool is leaning the way it is.</p>
+    </div>
+
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <table class="breakdown-table" id="breakdownTable"></table>
+    </div>
+
+    <p class="small" style="margin-top:18px">Scores reflect 2026 model-year vehicles, drawing on Consumer Reports, J.D. Power, RepairPal, EPA fuel-economy ratings, and manufacturer specifications as of April 2026.</p>
+  </div>
+</section>
+
+<!-- ============ LEARN ============ -->
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">A little context</div>
+      <h2>Things worth knowing</h2>
+      <p class="section-lede">Some plain-English background on the words on the sliders. No jargon, no salesmanship, just the bits that actually move the needle.</p>
+    </div>
+
+    <div class="learn-grid">
+      <div class="learn-card">
+        <h3>What "hybrid" actually means</h3>
+        <p>All four cars have a regular gas engine plus a small electric motor and a battery. The car decides automatically which to use, when. <strong>You never plug it in.</strong> You just put gas in. That's it.</p>
+        <p>The payoff is fewer trips to the pump. The 42 mpg Corolla Cross uses about 30 percent less gas than a typical non-hybrid SUV. Over a year, that's real money and a lot fewer Tuesday afternoons spent at a Shell station.</p>
+      </div>
+
+      <div class="learn-card">
+        <h3>How safety factors in (it does, automatically)</h3>
+        <p>You won't find a "safety" slider on the tool. That's on purpose. Everyone wants the safest car, so it's not really a preference, it's a baseline. Putting it on a slider would imply you might rationally pick "less safe" to get something else, and that's a weird message.</p>
+        <p>Instead, every car gets penalized for any safety shortfall. The penalty is quiet but real: about 5 percent off the final score per safety tier missed. The <strong>Forester</strong> and <strong>RAV4</strong> are IIHS Top Safety Pick+ winners and pay no penalty. The <strong>CR-V</strong> got "Acceptable" instead of "Good" on the new moderate-overlap test. The <strong>Corolla Cross</strong> is Top Safety Pick (without the Plus) because of a rear-seat protection issue.</p>
+      </div>
+
+      <div class="learn-card">
+        <h3>What "all-wheel drive" buys you</h3>
+        <p>All-wheel drive (AWD) means the car can send power to all four wheels when one starts slipping. In coastal Connecticut, that translates to "your driveway after an ice storm doesn't have to be a personal challenge."</p>
+        <p>The <strong>Forester</strong> has full-time mechanical AWD, which is the gold-plated version. The <strong>RAV4</strong> and <strong>Corolla Cross</strong> hybrids have AWD standard but it's electric (an extra motor on the rear axle), which works well but isn't as confident on a steep, icy hill. The <strong>CR-V Hybrid</strong> has AWD as an option, not a default, so you have to specifically request it.</p>
+      </div>
+
+      <div class="learn-card">
+        <h3>Reliability isn't the same as the brand badge</h3>
+        <p>Toyota and Honda both have decades of reputation, but the actual data is more nuanced than the bumper-sticker version. The 2026 <strong>RAV4</strong> is a clean-sheet redesign. Consumer Reports has a standing rule: don't buy a redesigned car in its first year, because the bugs haven't been caught yet.</p>
+        <p>The <strong>CR-V Hybrid</strong> is the most mature platform here, but early 2026 models have a known annoying bug where CarPlay won't read text messages aloud. The <strong>Corolla Cross Hybrid</strong> is the oldest and least exciting of the four, which in reliability terms is the highest possible compliment.</p>
+      </div>
+
+      <div class="learn-card">
+        <h3>Visibility is underrated</h3>
+        <p>Nobody walks into a dealership saying "I want big windows," but everybody wishes they had them once they're in the parking lot. The <strong>Forester</strong> has the tallest, most upright greenhouse in the segment. You can see everything: cars merging, kids on bikes, the back of the parking lot when you're trying to remember if you left a coffee on the roof.</p>
+        <p>The <strong>CR-V</strong>'s sloped roofline looks more athletic but pays for it in over-the-shoulder blind spots. The other two split the difference.</p>
+      </div>
+
+      <div class="learn-card">
+        <h3>Honest opinion, since you asked</h3>
+        <p>If you don't want to fiddle with the sliders, here's the short version:</p>
+        <p>The <strong>Subaru Forester Hybrid</strong> is the do-it-all answer for anyone in a place with real winters. IIHS Top Safety Pick+, the best visibility of the four, full-time mechanical AWD, easy entry, and physical knobs that don't make you fight a touchscreen.</p>
+        <p>The <strong>CR-V Hybrid</strong> is the call if you do a lot of highway miles and care more about quiet refinement than weather capability. Just remember to specifically order AWD if you want it.</p>
+        <p>The <strong>RAV4</strong> is genuinely excellent, but the 2026 redesign means it's an unknown quantity for a year or so. Maybe wait, maybe don't.</p>
+        <p>The <strong>Corolla Cross</strong> is the right pick if you mostly drive alone, want every last mpg, and don't need the extra room.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="sig">Whichever you pick.</div>
+  <div>You're going to be driving it for a long, happy time.</div>
+  <div style="margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.04em">Built with care · April 2026</div>
+</footer>
+
+<script>
+// ============================================================
+// DATA — scoring rubric (0-10 per dimension, per car)
+// ============================================================
+
+const CARS = [
+  { id:'forester', name:'Subaru Forester Hybrid',       short:'Forester',      color:'#5E7A60' },
+  { id:'crv',      name:'Honda CR-V Hybrid',            short:'CR-V',          color:'#1F3A5F' },
+  { id:'rav4',     name:'Toyota RAV4 Hybrid',           short:'RAV4',          color:'#D4843A' },
+  { id:'cross',    name:'Toyota Corolla Cross Hybrid',  short:'Corolla Cross', color:'#B85042' },
+];
+
+// Dimensions are grouped into sections for easier scanning.
+// Each dimension: id, label, help text, source note, scores per car (0-10)
+const SECTIONS = [
+  {
+    title: 'Daily driving',
+    eyebrow: 'How it feels behind the wheel',
+    dimensions: [
+      {
+        id:'comfort',
+        label:'Ride comfort & quiet',
+        help:'How smooth and quiet the car feels on long drives.',
+        source:'Edmunds, Consumer Reports road tests. CR-V is most refined; the redesigned 2026 RAV4 has closed the gap. Forester Hybrid is comfortable but slightly firmer. Corolla Cross is adequate but noticeably noisier.',
+        scores:{ forester:8, crv:9, rav4:8, cross:6 }
+      },
+      {
+        id:'visibility',
+        label:'Outward visibility',
+        help:'How easy it is to see out in every direction. Big windows, fewer blind spots.',
+        source:'Forester is widely cited as best-in-class. Tall greenhouse, slim pillars, large rear window. CR-V is the worst here due to a sloping rear roofline.',
+        scores:{ forester:10, crv:6, rav4:7, cross:7 }
+      },
+      {
+        id:'access',
+        label:'Easy to get in and out',
+        help:'How effortless it is to slide in and step out. Some cars you climb into, some you drop into, some are just right.',
+        source:'Forester consistently top-ranked for accessibility (high seat, low step-in, wide doors). CR-V also praised for easy rear-seat access. RAV4 has wide doors but slightly higher floor. Corolla Cross sits low like a sedan.',
+        scores:{ forester:10, crv:9, rav4:8, cross:5 }
+      },
+      {
+        id:'controls',
+        label:'Familiar controls',
+        help:'Real knobs and buttons instead of touchscreens you have to learn.',
+        source:'Forester retains physical volume and tuning knobs. CR-V controls also called user-friendly by Consumer Reports. RAV4 2026 leans most heavily on a large 12.9" touchscreen. Corolla Cross has simpler hardware with smaller screens.',
+        scores:{ forester:9, crv:8, rav4:7, cross:8 }
+      },
+      {
+        id:'parking',
+        label:'Easy to park',
+        help:'How small and nimble it is for tight spots and parking lots.',
+        source:'Length: Corolla Cross 172", RAV4 ~180", Forester 183", CR-V 184". Only the Corolla Cross is meaningfully smaller; the other three are within an inch.',
+        scores:{ forester:7, crv:7, rav4:8, cross:9 }
+      },
+    ]
+  },
+  {
+    title: 'Operating costs',
+    eyebrow: 'Year-after-year expenses',
+    dimensions: [
+      {
+        id:'mpg',
+        label:'Fuel economy',
+        help:'How far it goes on a gallon of gas. Fewer fill-ups.',
+        source:'EPA combined estimates. Corolla Cross 42 mpg, RAV4 39 mpg, CR-V 37 mpg, Forester 35 mpg.',
+        scores:{ forester:6, crv:8, rav4:9, cross:10 }
+      },
+      {
+        id:'maintenance',
+        label:'Low maintenance cost',
+        help:'How cheap it is to keep running each year (oil changes, tires, brakes, scheduled service).',
+        source:'RepairPal annual estimates: CR-V ~$407, RAV4 ~$429. Corolla Cross is cheapest (~$350) per CarEdge. Forester Hybrid maintenance data is limited but Subaru runs slightly higher than Toyota/Honda historically.',
+        scores:{ forester:8, crv:8, rav4:8, cross:10 }
+      },
+    ]
+  },
+  {
+    title: 'Long-term confidence',
+    eyebrow: 'Weather, reliability, room',
+    dimensions: [
+      {
+        id:'reliability',
+        label:'Reliability',
+        help:'How rarely the car needs unexpected repairs.',
+        source:'CR ranks the Corolla Cross as Toyota\'s most reliable model (2nd only to Subaru Impreza overall). Forester Hybrid and CR-V Hybrid both score "above average." The 2026 RAV4 has no reliability data yet because it is a complete redesign, and Consumer Reports explicitly advises waiting a year on first-year redesigns.',
+        scores:{ forester:8, crv:8, rav4:6, cross:9 }
+      },
+      {
+        id:'snow',
+        label:'Good in snow',
+        help:'How confident it feels in slush, ice, and bad weather.',
+        source:'Forester has full-time mechanical symmetric AWD with X-MODE and 8.7" ground clearance, the gold standard. RAV4 and Corolla Cross hybrids have standard AWD using an electric motor on the rear axle (good but less robust). CR-V Hybrid: AWD is OPTIONAL, must be specifically ordered.',
+        scores:{ forester:10, crv:6, rav4:8, cross:7 }
+      },
+      {
+        id:'space',
+        label:'Roominess',
+        help:'Passenger and cargo space combined. Room for people, groceries, the occasional Costco run.',
+        source:'Forester 111.9 cu ft passenger (most), 27.5 cu ft cargo (least, due to hybrid battery placement). CR-V 105.9 / 39.3 (best cargo). RAV4 98.9 / 37.5. Corolla Cross is meaningfully smaller throughout.',
+        scores:{ forester:9, crv:9, rav4:8, cross:6 }
+      },
+    ]
+  },
+];
+
+// Flatten into a single DIMENSIONS array for compute logic
+const DIMENSIONS = SECTIONS.flatMap(s => s.dimensions);
+
+// Safety is NOT a slider — it's a baseline assumption. Cars that are less safe
+// get penalized regardless of user priorities. Stored separately and applied
+// as a gentle multiplier (factor = 0.85 + 0.15 × safety/10) so a car at safety 7
+// keeps about 95.5% of its weighted score, while safety 10 keeps 100%.
+const SAFETY = {
+  forester: 10,  // IIHS 2026 TSP+ ("Good"), Subaru EyeSight (top-tier)
+  crv:      7,   // IIHS 2026 "Acceptable" (one tier below Good), Honda Sensing
+  rav4:     9,   // IIHS 2026 TSP+ ("Good"), Toyota Safety Sense 4.0
+  cross:    7,   // IIHS Top Safety Pick (NOT Plus), TSS, fails moderate-overlap rear
+};
+const SAFETY_NOTES = {
+  forester: 'IIHS Top Safety Pick+ · Subaru EyeSight',
+  crv:      'IIHS Acceptable rating · Honda Sensing',
+  rav4:     'IIHS Top Safety Pick+ · Toyota Safety Sense 4.0',
+  cross:    'IIHS Top Safety Pick (not Plus) · Toyota Safety Sense',
+};
+
+// Why-each-car-wins one-liners (used when a car is the top pick)
+const RATIONALES = {
+  forester: "The do-it-all answer. Best visibility, easiest to get in and out of, full-time mechanical all-wheel drive, IIHS Top Safety Pick+. Quietly excellent at almost everything.",
+  crv:      "The refined choice. Quietest cabin, smoothest ride, biggest cargo hold. The trade-off: AWD is optional, not standard, and the 2026 IIHS rating is a tier below the Subaru and Toyota.",
+  rav4:     "Toyota's bestseller, freshly redesigned, hybrid-only. Strong fuel economy, IIHS Top Safety Pick+, and the most decorated hybrid hardware on the market. The catch: it's brand-new for 2026, so the reliability story has an asterisk.",
+  cross:    "The compact one. Best fuel economy, easiest parking, lowest maintenance cost. The right call if you mostly drive solo or with one passenger and don't need a lot of space.",
+};
+
+// ============================================================
+// PRESETS — only "balanced" remains, used by the reset button
+// ============================================================
+const PRESETS = {
+  balanced: Object.fromEntries(DIMENSIONS.map(d => [d.id, 3])),
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let weights = { ...PRESETS.balanced };
+
+const SCALE_LABELS = ['', 'Not at all', 'A little', 'Somewhat', 'Quite a bit', 'Super important'];
+
+// ============================================================
+// RENDER: SLIDERS (grouped by section)
+// ============================================================
+const slidersEl = document.getElementById('sliders');
+SECTIONS.forEach((section, sIdx) => {
+  // Section header
+  const sectionHead = document.createElement('div');
+  sectionHead.className = 'slider-section-head';
+  sectionHead.innerHTML = `
+    <div class="slider-section-eyebrow">${section.eyebrow}</div>
+    <h3 class="slider-section-title">${section.title}</h3>
+  `;
+  slidersEl.appendChild(sectionHead);
+
+  section.dimensions.forEach(d => {
+    const row = document.createElement('div');
+    row.className = 'slider-row';
+    row.innerHTML = `
+      <div class="slider-head">
+        <label class="slider-label" for="slider-${d.id}">${d.label}</label>
+        <span class="slider-value" id="val-${d.id}">${SCALE_LABELS[weights[d.id]]}</span>
+      </div>
+      <div class="slider-help">${d.help}</div>
+      <div class="slider-track-wrap">
+        <input type="range" min="1" max="5" step="1" value="${weights[d.id]}" id="slider-${d.id}" data-id="${d.id}" aria-label="${d.label} importance, 1 to 5" list="ticks-${d.id}">
+        <div class="slider-ticks" aria-hidden="true">
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+        </div>
+        <div class="slider-axis" aria-hidden="true">
+          <span>Not at all</span>
+          <span>Super important</span>
+        </div>
+      </div>
+    `;
+    slidersEl.appendChild(row);
+  });
+});
+
+// hook up sliders
+DIMENSIONS.forEach(d => {
+  const slider = document.getElementById(`slider-${d.id}`);
+  const update = () => {
+    const v = parseInt(slider.value, 10);
+    weights[d.id] = v;
+    // visual fill: convert 1-5 to 0-100% (1=0%, 2=25%, 3=50%, 4=75%, 5=100%)
+    slider.style.setProperty('--pct', ((v - 1) * 25) + '%');
+    document.getElementById(`val-${d.id}`).textContent = SCALE_LABELS[v];
+    clearActivePreset();
+    recompute();
+  };
+  slider.addEventListener('input', update);
+  // initial fill
+  slider.style.setProperty('--pct', ((weights[d.id] - 1) * 25) + '%');
+});
+
+// ============================================================
+// PRESETS
+// ============================================================
+document.querySelectorAll('.preset-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.preset;
+    weights = { ...PRESETS[key] };
+    syncSliders();
+    // Reset is an action, not a stateful selection — don't mark it active
+    if (!btn.classList.contains('preset-btn-reset')) {
+      setActivePreset(btn);
+    } else {
+      clearActivePreset();
+    }
+    recompute();
+  });
+});
+
+function syncSliders(){
+  DIMENSIONS.forEach(d => {
+    const v = weights[d.id];
+    const slider = document.getElementById(`slider-${d.id}`);
+    slider.value = v;
+    slider.style.setProperty('--pct', ((v - 1) * 25) + '%');
+    document.getElementById(`val-${d.id}`).textContent = SCALE_LABELS[v];
+  });
+}
+function clearActivePreset(){
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+}
+function setActivePreset(btn){
+  clearActivePreset();
+  btn.classList.add('active');
+}
+
+// ============================================================
+// COMPUTE: weighted average
+// ============================================================
+function compute(){
+  const totalWeight = DIMENSIONS.reduce((s,d) => s + (weights[d.id] || 0), 0);
+  return CARS.map(car => {
+    if (totalWeight === 0) {
+      return { car, score: 0, rawScore: 0, safetyFactor: 1 };
+    }
+    const weightedSum = DIMENSIONS.reduce((s,d) => s + (weights[d.id] || 0) * d.scores[car.id], 0);
+    const rawScore = weightedSum / totalWeight; // 0-10
+    // Safety is a fixed baseline penalty, not a slider.
+    // Factor = 0.85 + 0.15 × (safety/10). Safety 10 → 1.00, safety 7 → 0.955.
+    const safetyFactor = 0.85 + 0.15 * (SAFETY[car.id] / 10);
+    const score = rawScore * safetyFactor;
+    return { car, score, rawScore, safetyFactor };
+  });
+}
+
+function recompute(){
+  const results = compute().sort((a,b) => b.score - a.score);
+  const max = results[0].score || 1;
+
+  // Winner card
+  const winnerCard = document.getElementById('winnerCard');
+  const winnerName = document.getElementById('winnerName');
+  const winnerRat  = document.getElementById('winnerRationale');
+  const winnerEye  = document.getElementById('winnerEyebrow');
+
+  const top = results[0];
+  winnerEye.textContent = 'Your top match';
+  winnerName.textContent = top.car.name;
+  winnerRat.textContent = RATIONALES[top.car.id];
+
+  // is there a near-tie at the top?
+  if (results[1] && Math.abs(results[0].score - results[1].score) < 0.05) {
+    winnerEye.textContent = 'A near-tie at the top';
+    winnerRat.textContent = `${top.car.name} edges out ${results[1].car.name} by a hair. ` + RATIONALES[top.car.id];
+  }
+
+  // Ranking list
+  const rankingList = document.getElementById('rankingList');
+  rankingList.innerHTML = results.map((r, i) => {
+    const pct = max > 0 ? Math.round((r.score / 10) * 100) : 0;
+    const isTop = i === 0;
+    return `
+      <div class="rank-row ${isTop ? 'top' : ''}">
+        <div class="rank-num">${i+1}</div>
+        <div class="rank-body">
+          <div class="rank-name-line">
+            <span class="rank-name">${r.car.short}</span>
+            <span class="rank-score">${r.score.toFixed(1)} / 10</span>
+          </div>
+          <div class="rank-bar"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Update the 2D balance visualization
+  updateBalanceVis(results);
+}
+
+// ============================================================
+// BALANCE VISUALIZATION — weighted center of mass on a 2D plane
+// ============================================================
+// Corner positions in % of stage size (matches CSS car-node positions)
+const CORNERS = {
+  forester: { x: 16, y: 16 },  // top-left
+  crv:      { x: 84, y: 16 },  // top-right
+  cross:    { x: 16, y: 84 },  // bottom-left
+  rav4:     { x: 84, y: 84 },  // bottom-right
+};
+// SVG line endpoints (using viewBox 0..400)
+const SVG_CORNERS = {
+  forester: { x: 64,  y: 64  },
+  crv:      { x: 336, y: 64  },
+  cross:    { x: 64,  y: 336 },
+  rav4:     { x: 336, y: 336 },
+};
+
+function updateBalanceVis(results){
+  // results is sorted desc by score
+  const scores = {};
+  results.forEach(r => scores[r.car.id] = r.score);
+
+  // Use score deltas above the minimum so the marker is visually responsive.
+  // Add a small constant so even a tied last place still has tiny gravity.
+  const minScore = Math.min(...Object.values(scores));
+  const adjusted = {};
+  Object.keys(scores).forEach(id => {
+    adjusted[id] = (scores[id] - minScore) + 0.3;
+  });
+  const totalPull = Object.values(adjusted).reduce((s,v) => s+v, 0);
+
+  // Weighted-average corner position
+  let mx = 0, my = 0;
+  Object.keys(adjusted).forEach(id => {
+    const w = adjusted[id] / totalPull;
+    mx += CORNERS[id].x * w;
+    my += CORNERS[id].y * w;
+  });
+
+  // Move the marker
+  const marker = document.getElementById('balanceMarker');
+  if (marker) {
+    marker.style.left = mx + '%';
+    marker.style.top  = my + '%';
+  }
+
+  // Update pull lines (their visual weight reflects each car's pull)
+  Object.keys(adjusted).forEach(id => {
+    const line = document.getElementById('pull-' + id);
+    if (!line) return;
+    // Line goes from marker to that car's corner
+    // Marker in SVG coords (viewBox 0..400, where 0% = 0 and 100% = 400)
+    line.setAttribute('x1', mx * 4);
+    line.setAttribute('y1', my * 4);
+    line.setAttribute('x2', SVG_CORNERS[id].x);
+    line.setAttribute('y2', SVG_CORNERS[id].y);
+  });
+
+  // Highlight the leader: scale up the leading car node and emphasize its line
+  const leaderId = results[0].car.id;
+  ['forester','crv','rav4','cross'].forEach(id => {
+    const node = document.getElementById('node-' + id);
+    const line = document.getElementById('pull-' + id);
+    if (node) node.classList.toggle('leader', id === leaderId);
+    if (line) line.classList.toggle('leader', id === leaderId);
+  });
+
+  // Near-tie: highlight both top and second
+  if (results[1] && Math.abs(results[0].score - results[1].score) < 0.05) {
+    const secondId = results[1].car.id;
+    const secondNode = document.getElementById('node-' + secondId);
+    const secondLine = document.getElementById('pull-' + secondId);
+    if (secondNode) secondNode.classList.add('leader');
+    if (secondLine) secondLine.classList.add('leader');
+  }
+}
+
+// ============================================================
+// BREAKDOWN TABLE
+// ============================================================
+function renderBreakdown(){
+  const table = document.getElementById('breakdownTable');
+  let html = `<thead><tr><th>What it measures</th>`;
+  CARS.forEach(c => html += `<th class="num">${c.short}</th>`);
+  html += `</tr></thead><tbody>`;
+
+  DIMENSIONS.forEach(d => {
+    html += `<tr>
+      <td class="dim">
+        ${d.label}
+        <span class="source">${d.source}</span>
+      </td>`;
+    CARS.forEach(c => {
+      const s = d.scores[c.id];
+      html += `<td class="num"><span class="score-cell score-${s}">${s}</span></td>`;
+    });
+    html += `</tr>`;
+  });
+
+  // Safety is appended as a special row — not a slider, but a baseline penalty
+  html += `<tr class="safety-row">
+    <td class="dim">
+      <span class="dim-flag">Always considered</span>
+      Safety ratings &amp; driver assist
+      <span class="source">IIHS 2026 ratings plus driver-assist tech quality. This is not a slider; every car is automatically penalized when it scores below 10. A safer car holds 100 percent of its score; a less safe car keeps about 95 percent.</span>
+    </td>`;
+  CARS.forEach(c => {
+    const s = SAFETY[c.id];
+    html += `<td class="num"><span class="score-cell score-${s}" title="${SAFETY_NOTES[c.id]}">${s}</span></td>`;
+  });
+  html += `</tr>`;
+
+  html += `</tbody>`;
+  table.innerHTML = html;
+}
+renderBreakdown();
+
+// ============================================================
+// INITIAL
+// ============================================================
+recompute();
+
+// ============================================================
+// PERSISTENT STORAGE — save weights so they're remembered
+// ============================================================
+async function loadSaved(){
+  try {
+    if (typeof window.storage !== 'undefined') {
+      const saved = await window.storage.get('hybrid-weights');
+      if (saved && saved.value) {
+        const parsed = JSON.parse(saved.value);
+        // merge over defaults to handle schema changes
+        weights = { ...PRESETS.balanced, ...parsed };
+        syncSliders();
+        recompute();
+      }
+    }
+  } catch(e) { /* fine, no saved state */ }
+}
+async function saveWeights(){
+  try {
+    if (typeof window.storage !== 'undefined') {
+      await window.storage.set('hybrid-weights', JSON.stringify(weights));
+    }
+  } catch(e) { /* fine */ }
+}
+// debounced save
+let saveTimer;
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveWeights, 400);
+}
+// hook saving into recompute
+const _origRecompute = recompute;
+recompute = function(){
+  _origRecompute();
+  scheduleSave();
+};
+loadSaved();
+
+</script>
+</body>
+</html>

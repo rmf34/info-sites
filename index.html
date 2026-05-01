@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Info sites</title>
+<style>
+  :root {
+    --bg: #fcfbf7;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.12);
+    --border-strong: rgba(0,0,0,0.22);
+    --text: #1a1a1a;
+    --text-2: #444;
+    --text-3: #777;
+    --accent: #185FA5;
+    --accent-text: #0C447C;
+    --font-serif: "Charter", "Iowan Old Style", "Georgia", "Times New Roman", serif;
+    --font-sans: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a1a;
+      --surface: #232323;
+      --border: rgba(255,255,255,0.12);
+      --border-strong: rgba(255,255,255,0.22);
+      --text: #f0f0f0;
+      --text-2: #c0c0c0;
+      --text-3: #999;
+      --accent: #85B7EB;
+      --accent-text: #B5D4F4;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+  }
+  h1 {
+    font-size: 38px;
+    line-height: 1.15;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+  }
+  .lede {
+    color: var(--text-2);
+    font-size: 18px;
+    margin: 0;
+  }
+  ul.cards {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 16px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: border-color 120ms ease;
+  }
+  .card a {
+    display: block;
+    padding: 22px 24px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .card:hover {
+    border-color: var(--border-strong);
+  }
+  .card h2 {
+    font-size: 22px;
+    margin: 0 0 6px;
+    color: var(--accent-text);
+    letter-spacing: -0.005em;
+  }
+  .card p {
+    margin: 0;
+    color: var(--text-2);
+    font-size: 16px;
+  }
+  .meta {
+    margin-top: 10px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+  }
+  footer {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-3);
+    font-family: var(--font-sans);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Info sites</h1>
+    <p class="lede">A small collection of decision helpers and reference pages.</p>
+  </header>
+
+  <ul class="cards">
+    <li class="card">
+      <a href="martial_arts_comparison.html">
+        <h2>The honest map of the world's common martial arts</h2>
+        <p>A calibrated heatmap comparing styles across what they actually train, what they're good for, and what they aren't.</p>
+        <div class="meta">Reference &middot; Heatmap</div>
+      </a>
+    </li>
+    <li class="card">
+      <a href="which-hybrid.html">
+        <h2>Which hybrid is right for you?</h2>
+        <p>A little decision helper that scores today's hybrid lineup against what you actually care about.</p>
+        <div class="meta">Decision helper</div>
+      </a>
+    </li>
+  </ul>
+
+  <footer>
+    Static pages. No tracking, no scripts beyond what each page needs.
+  </footer>
+</main>
+</body>
+</html>
