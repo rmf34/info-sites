@@ -58,6 +58,22 @@ body{
   pointer-events:none;
 }
 .hero-inner{max-width:1100px;margin:0 auto;position:relative}
+.crumb{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  margin-bottom:32px;
+}
+.crumb a{
+  color:rgba(255,255,255,.7);
+  text-decoration:none;
+  border-bottom:1px solid rgba(255,255,255,.2);
+  padding-bottom:1px;
+  transition:color .15s ease, border-color .15s ease;
+}
+.crumb a:hover,.crumb a:focus-visible{ color:var(--amber-soft); border-color:var(--amber-soft) }
+.crumb a:focus-visible{ outline:2px solid var(--amber); outline-offset:3px }
 .eyebrow{
   font-family:var(--mono);
   font-size:11px;
@@ -961,6 +977,7 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
 <!-- ============ HERO ============ -->
 <header class="hero">
   <div class="hero-inner">
+    <nav class="crumb" aria-label="Breadcrumb"><a href="index.html">&larr; Info sites</a></nav>
     <div class="eyebrow">From Matt · With love</div>
     <h1>Which hybrid<br>is right for <em>you</em>?</h1>
     <p class="subtitle">Four hybrid SUVs walk into a parking lot. Which one comes home with you depends on what you actually care about. Move the sliders. Watch the tool argue with itself. The car that wins is the one that fits <em>your</em> life, not somebody else's idea of what you should want.</p>
@@ -979,22 +996,7 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
 
     <div class="cars-grid">
       <article class="car-card">
-        <button type="button" class="car-photo" data-gallery="forester" aria-label="View photos of Subaru Forester Hybrid"><img src="img/forester.jpg" alt="Subaru Forester Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
-        <div class="car-card-body">
-          <div class="car-tag tag-forester">The Kayak Rack</div>
-          <div class="car-name">Subaru Forester Hybrid</div>
-          <div class="car-stat"><span class="car-mpg">35</span><span class="car-mpg-unit">mpg combined</span></div>
-          <p class="car-blurb">The one your neighbor with the kayak rack drives. Tall windows you can actually see out of, full-time all-wheel drive that doesn't need to be coaxed into action, and physical buttons that don't make you hunt for them.</p>
-          <div class="car-safety">
-            <span class="safety-pill safety-best">IIHS Top Safety Pick+</span>
-            <span class="safety-detail">Subaru EyeSight driver assist</span>
-          </div>
-          <div class="car-meta"><span>~$36k</span><span>NEW for 2026</span></div>
-        </div>
-      </article>
-
-      <article class="car-card">
-        <button type="button" class="car-photo" data-gallery="crv" aria-label="View photos of Honda CR-V Hybrid"><img src="img/crv.jpg" alt="Honda CR-V Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
+        <button type="button" class="car-photo" data-gallery="crv" aria-label="View photos of Honda CR-V Hybrid"><img src="img/crv.png" alt="Honda CR-V Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
         <div class="car-card-body">
           <div class="car-tag tag-crv">The Velvet Glove</div>
           <div class="car-name">Honda CR-V Hybrid</div>
@@ -1009,7 +1011,7 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
       </article>
 
       <article class="car-card">
-        <button type="button" class="car-photo" data-gallery="rav4" aria-label="View photos of Toyota RAV4 Hybrid"><img src="img/rav4.jpg" alt="Toyota RAV4 Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
+        <button type="button" class="car-photo" data-gallery="rav4" aria-label="View photos of Toyota RAV4 Hybrid"><img src="img/rav4.png" alt="Toyota RAV4 Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
         <div class="car-card-body">
           <div class="car-tag tag-rav4">The Bestseller</div>
           <div class="car-name">Toyota RAV4 Hybrid</div>
@@ -1024,7 +1026,7 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
       </article>
 
       <article class="car-card">
-        <button type="button" class="car-photo" data-gallery="cross" aria-label="View photos of Toyota Corolla Cross Hybrid"><img src="img/cross.jpg" alt="Toyota Corolla Cross Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
+        <button type="button" class="car-photo" data-gallery="cross" aria-label="View photos of Toyota Corolla Cross Hybrid"><img src="img/cross.png" alt="Toyota Corolla Cross Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
         <div class="car-card-body">
           <div class="car-tag tag-cross">The Lean Machine</div>
           <div class="car-name">Toyota Corolla Cross Hybrid</div>
@@ -1035,6 +1037,21 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
             <span class="safety-detail">Toyota Safety Sense</span>
           </div>
           <div class="car-meta"><span>~$31k</span><span>Proven platform</span></div>
+        </div>
+      </article>
+
+      <article class="car-card">
+        <button type="button" class="car-photo" data-gallery="forester" aria-label="View photos of Subaru Forester Hybrid"><img src="img/forester.png" alt="Subaru Forester Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
+        <div class="car-card-body">
+          <div class="car-tag tag-forester">The Kayak Rack</div>
+          <div class="car-name">Subaru Forester Hybrid</div>
+          <div class="car-stat"><span class="car-mpg">35</span><span class="car-mpg-unit">mpg combined</span></div>
+          <p class="car-blurb">The one your neighbor with the kayak rack drives. Tall windows you can actually see out of, full-time all-wheel drive that doesn't need to be coaxed into action, and physical buttons that don't make you hunt for them.</p>
+          <div class="car-safety">
+            <span class="safety-pill safety-best">IIHS Top Safety Pick+</span>
+            <span class="safety-detail">Subaru EyeSight driver assist</span>
+          </div>
+          <div class="car-meta"><span>~$36k</span><span>NEW for 2026</span></div>
         </div>
       </article>
     </div>
@@ -1190,6 +1207,16 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
   <div>You're going to be driving it for a long, happy time.</div>
   <div style="margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.04em">Built with care · April 2026</div>
 </footer>
+
+<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" aria-hidden="true">
+  <div class="lightbox-stage">
+    <button id="lightbox-close" type="button" class="lightbox-btn lightbox-close" aria-label="Close">&times;</button>
+    <button id="lightbox-prev" type="button" class="lightbox-btn lightbox-prev" aria-label="Previous photo">&#8249;</button>
+    <img id="lightbox-img" class="lightbox-img" alt=""/>
+    <button id="lightbox-next" type="button" class="lightbox-btn lightbox-next" aria-label="Next photo">&#8250;</button>
+    <div id="lightbox-counter" class="lightbox-counter"></div>
+  </div>
+</div>
 
 <script>
 // ============================================================
@@ -1654,10 +1681,10 @@ loadSaved();
 
 /* ---------- LIGHTBOX CAROUSEL ---------- */
 const galleries = {
-  forester: { name: 'Subaru Forester Hybrid', photos: ['img/forester.jpg','img/forester-2.jpg','img/forester-3.jpg'] },
-  crv:      { name: 'Honda CR-V Hybrid',      photos: ['img/crv.jpg','img/crv-2.jpg','img/crv-3.jpg'] },
-  rav4:     { name: 'Toyota RAV4 Hybrid',     photos: ['img/rav4.jpg','img/rav4-2.jpg','img/rav4-3.jpg'] },
-  cross:    { name: 'Toyota Corolla Cross Hybrid', photos: ['img/cross.jpg','img/cross-2.jpg','img/cross-3.jpg'] }
+  forester: { name: 'Subaru Forester Hybrid', photos: ['img/forester.png','img/forester.jpg','img/forester-2.jpg','img/forester-3.jpg'] },
+  crv:      { name: 'Honda CR-V Hybrid',      photos: ['img/crv.png','img/crv.jpg','img/crv-2.jpg','img/crv-3.jpg'] },
+  rav4:     { name: 'Toyota RAV4 Hybrid',     photos: ['img/rav4.png','img/rav4.jpg','img/rav4-2.jpg','img/rav4-3.jpg'] },
+  cross:    { name: 'Toyota Corolla Cross Hybrid', photos: ['img/cross.png','img/cross.jpg','img/cross-2.jpg','img/cross-3.jpg'] }
 };
 
 const lb = document.getElementById('lightbox');
@@ -1717,15 +1744,5 @@ document.addEventListener('keydown', e => {
 });
 
 </script>
-
-<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" aria-hidden="true">
-  <div class="lightbox-stage">
-    <button id="lightbox-close" type="button" class="lightbox-btn lightbox-close" aria-label="Close">&times;</button>
-    <button id="lightbox-prev" type="button" class="lightbox-btn lightbox-prev" aria-label="Previous photo">&#8249;</button>
-    <img id="lightbox-img" class="lightbox-img" alt=""/>
-    <button id="lightbox-next" type="button" class="lightbox-btn lightbox-next" aria-label="Next photo">&#8250;</button>
-    <div id="lightbox-counter" class="lightbox-counter"></div>
-  </div>
-</div>
 </body>
 </html>

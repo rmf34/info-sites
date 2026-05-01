@@ -75,6 +75,24 @@
     color: var(--accent);
     margin-bottom: 12px;
   }
+  .crumb {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .crumb a {
+    color: var(--text-3);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1px;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .crumb a:hover, .crumb a:focus-visible {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
   h1 {
     font-family: var(--font-serif);
     font-size: 48px;
@@ -1037,6 +1055,7 @@
 <div class="page">
 
 <header>
+  <nav class="crumb" aria-label="Breadcrumb"><a href="index.html">&larr; Info sites</a></nav>
   <div class="kicker">A calibrated comparison · 16 dimensions · 11 arts</div>
   <h1>The honest map of the world's common martial arts.</h1>
   <p class="deck">Most martial-arts comparisons are vibes dressed as data. This one separates what can be measured from what cannot, and does both deliberately.</p>
