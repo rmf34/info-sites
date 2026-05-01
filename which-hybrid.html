@@ -348,6 +348,15 @@ h2 em{font-style:italic;color:var(--amber);font-weight:400}
   border-radius:4px;
   border-left:3px solid var(--line);
 }
+.safety-eyebrow{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:500;
+  margin-bottom:2px;
+}
 .safety-pill{
   font-family:var(--mono);
   font-size:10px;
@@ -496,7 +505,7 @@ h2 em{font-style:italic;color:var(--amber);font-weight:400}
 }
 .slider-track-wrap{
   position:relative;
-  padding:0 0 22px;
+  padding:0 0 32px;
 }
 input[type=range]{
   -webkit-appearance:none;
@@ -535,7 +544,7 @@ input[type=range]::-moz-range-thumb{
 .slider-ticks{
   position:absolute;
   left:0;right:0;
-  top:14px;
+  top:22px;
   display:flex;
   justify-content:space-between;
   pointer-events:none;
@@ -552,11 +561,11 @@ input[type=range]::-moz-range-thumb{
 .slider-ticks span::before{
   content:"";
   position:absolute;
-  top:-9px;
+  top:-12px;
   left:50%;
   transform:translateX(-50%);
   width:1px;
-  height:5px;
+  height:6px;
   background:var(--line);
 }
 /* axis labels (Not at all... Super important) */
@@ -947,6 +956,111 @@ input[type=range]::-moz-range-thumb{
 .learn-card p:last-child{margin-bottom:0}
 .learn-card strong{color:var(--navy);font-weight:600}
 
+/* ---------- TEST DRIVE ---------- */
+.testdrive-bg{background:var(--cream);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.dealer-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:32px;
+  margin-top:8px;
+}
+@media (max-width:980px){ .dealer-grid{grid-template-columns:1fr;gap:28px} }
+.dealer-brand-head{
+  margin-bottom:14px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--line);
+}
+.dealer-brand-name{
+  font-family:var(--display);
+  font-size:22px;
+  font-weight:600;
+  color:var(--navy);
+  letter-spacing:-.005em;
+  line-height:1.2;
+  margin-bottom:2px;
+}
+.dealer-brand-cars{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.dealer-list{display:flex;flex-direction:column;gap:14px}
+.dealer-card{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:16px 18px 14px;
+  position:relative;
+  transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.dealer-card:hover{
+  transform:translateY(-1px);
+  box-shadow:var(--shadow);
+  border-color:var(--line-soft);
+}
+.dealer-distance{
+  position:absolute;
+  top:14px;
+  right:16px;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.08em;
+  color:var(--amber);
+  font-weight:600;
+}
+.dealer-name{
+  font-family:var(--display);
+  font-size:17px;
+  font-weight:600;
+  color:var(--navy);
+  margin:0 60px 6px 0;
+  line-height:1.25;
+  letter-spacing:-.005em;
+  font-variation-settings:"opsz" 36;
+}
+.dealer-addr{
+  display:block;
+  font-size:13px;
+  color:var(--ink);
+  line-height:1.5;
+  margin-bottom:10px;
+  text-decoration:none;
+  border-bottom:1px dashed transparent;
+  padding-bottom:1px;
+  width:fit-content;
+}
+.dealer-addr:hover,.dealer-addr:focus-visible{ border-bottom-color:var(--navy); color:var(--navy) }
+.dealer-addr:focus-visible{ outline:2px solid var(--amber); outline-offset:3px; border-radius:2px }
+.dealer-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.02em;
+  gap:10px;
+  padding-top:10px;
+  border-top:1px solid var(--line-soft);
+}
+.dealer-meta a{
+  color:var(--navy);
+  text-decoration:none;
+  border-bottom:1px solid transparent;
+  transition:border-color .15s ease;
+}
+.dealer-meta a:hover,.dealer-meta a:focus-visible{ border-bottom-color:var(--navy) }
+.dealer-meta a:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; border-radius:2px }
+.dealer-site{ color:var(--muted) !important }
+.testdrive-foot{
+  margin-top:32px;
+  font-size:13px;
+  color:var(--muted);
+  font-style:italic;
+  text-align:center;
+}
+
 /* ---------- FOOTER ---------- */
 footer{
   background:var(--navy-deep);
@@ -996,13 +1110,14 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
 
     <div class="cars-grid">
       <article class="car-card">
-        <button type="button" class="car-photo" data-gallery="crv" aria-label="View photos of Honda CR-V Hybrid"><img src="img/crv.png" alt="Honda CR-V Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
+        <button type="button" class="car-photo" data-gallery="crv" aria-label="View photos of Honda CR-V Hybrid"><img src="img/crv-1.jpg" alt="Honda CR-V Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
         <div class="car-card-body">
           <div class="car-tag tag-crv">The Velvet Glove</div>
           <div class="car-name">Honda CR-V Hybrid</div>
           <div class="car-stat"><span class="car-mpg">37</span><span class="car-mpg-unit">mpg combined</span></div>
           <p class="car-blurb">Quiet, smooth, and grown-up. Like a really good pair of broken-in loafers. The biggest cargo hold of the four for hauling whatever the day demands. Just know that all-wheel drive is optional, not standard, so you have to actually ask for it.</p>
           <div class="car-safety">
+            <div class="safety-eyebrow">Always considered · Safety &amp; driver assist</div>
             <span class="safety-pill safety-good">IIHS rating: Acceptable</span>
             <span class="safety-detail">Honda Sensing driver assist</span>
           </div>
@@ -1011,13 +1126,14 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
       </article>
 
       <article class="car-card">
-        <button type="button" class="car-photo" data-gallery="rav4" aria-label="View photos of Toyota RAV4 Hybrid"><img src="img/rav4.png" alt="Toyota RAV4 Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
+        <button type="button" class="car-photo" data-gallery="rav4" aria-label="View photos of Toyota RAV4 Hybrid"><img src="img/rav4-1.jpg" alt="Toyota RAV4 Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
         <div class="car-card-body">
           <div class="car-tag tag-rav4">The Bestseller</div>
           <div class="car-name">Toyota RAV4 Hybrid</div>
           <div class="car-stat"><span class="car-mpg">39</span><span class="car-mpg-unit">mpg combined</span></div>
           <p class="car-blurb">America's bestselling SUV, freshly redesigned for 2026 and now hybrid-only. Toyota's hybrid hardware has decades of bulletproof history. The catch: this exact version is brand-new, so the usual "Toyota = boring reliable" story has an asterisk on it for one year.</p>
           <div class="car-safety">
+            <div class="safety-eyebrow">Always considered · Safety &amp; driver assist</div>
             <span class="safety-pill safety-best">IIHS Top Safety Pick+</span>
             <span class="safety-detail">Toyota Safety Sense 4.0</span>
           </div>
@@ -1026,13 +1142,14 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
       </article>
 
       <article class="car-card">
-        <button type="button" class="car-photo" data-gallery="cross" aria-label="View photos of Toyota Corolla Cross Hybrid"><img src="img/cross.png" alt="Toyota Corolla Cross Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
+        <button type="button" class="car-photo" data-gallery="cross" aria-label="View photos of Toyota Corolla Cross Hybrid"><img src="img/cross-1.jpg" alt="Toyota Corolla Cross Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
         <div class="car-card-body">
           <div class="car-tag tag-cross">The Lean Machine</div>
           <div class="car-name">Toyota Corolla Cross Hybrid</div>
           <div class="car-stat"><span class="car-mpg">42</span><span class="car-mpg-unit">mpg combined</span></div>
           <p class="car-blurb">The compact one. Slips into parking spots the others sigh at, sips gas like it's expensive, and asks very little of you in maintenance. Cozy inside rather than spacious, so it's most at home with one or two people.</p>
           <div class="car-safety">
+            <div class="safety-eyebrow">Always considered · Safety &amp; driver assist</div>
             <span class="safety-pill safety-ok">IIHS Top Safety Pick</span>
             <span class="safety-detail">Toyota Safety Sense</span>
           </div>
@@ -1041,13 +1158,14 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
       </article>
 
       <article class="car-card">
-        <button type="button" class="car-photo" data-gallery="forester" aria-label="View photos of Subaru Forester Hybrid"><img src="img/forester.png" alt="Subaru Forester Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
+        <button type="button" class="car-photo" data-gallery="forester" aria-label="View photos of Subaru Forester Hybrid"><img src="img/forester-1.jpg" alt="Subaru Forester Hybrid"/><span class="photo-zoom-hint">View photos</span></button>
         <div class="car-card-body">
           <div class="car-tag tag-forester">The Kayak Rack</div>
           <div class="car-name">Subaru Forester Hybrid</div>
           <div class="car-stat"><span class="car-mpg">35</span><span class="car-mpg-unit">mpg combined</span></div>
           <p class="car-blurb">The one your neighbor with the kayak rack drives. Tall windows you can actually see out of, full-time all-wheel drive that doesn't need to be coaxed into action, and physical buttons that don't make you hunt for them.</p>
           <div class="car-safety">
+            <div class="safety-eyebrow">Always considered · Safety &amp; driver assist</div>
             <span class="safety-pill safety-best">IIHS Top Safety Pick+</span>
             <span class="safety-detail">Subaru EyeSight driver assist</span>
           </div>
@@ -1202,9 +1320,105 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
   </div>
 </section>
 
+<!-- ============ TEST DRIVE ============ -->
+<section class="testdrive-bg" id="testdrive">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">Go drive one</div>
+      <h2>Test drive</h2>
+      <p class="section-lede">Spec sheets only get you so far. The two closest dealers per brand to Black Rock &mdash; call ahead to confirm a hybrid is actually on the lot, since hybrids tend to sell faster than they arrive.</p>
+    </div>
+
+    <div class="dealer-grid">
+      <div class="dealer-brand">
+        <div class="dealer-brand-head">
+          <div class="dealer-brand-name">Honda</div>
+          <div class="dealer-brand-cars">CR-V Hybrid</div>
+        </div>
+        <div class="dealer-list">
+          <div class="dealer-card">
+            <div class="dealer-distance">2.5 mi</div>
+            <h3 class="dealer-name">Honda of Westport</h3>
+            <a class="dealer-addr" href="https://www.google.com/maps/search/?api=1&amp;query=186+Linwood+Ave+Fairfield+CT+06824" target="_blank" rel="noopener">186 Linwood Ave<br>Fairfield, CT 06824</a>
+            <div class="dealer-meta">
+              <a href="tel:+12037631233">(203) 763-1233</a>
+              <a class="dealer-site" href="https://www.hondaofwestport.com/" target="_blank" rel="noopener">website &rarr;</a>
+            </div>
+          </div>
+          <div class="dealer-card">
+            <div class="dealer-distance">9.5 mi</div>
+            <h3 class="dealer-name">Curtiss Ryan Honda</h3>
+            <a class="dealer-addr" href="https://www.google.com/maps/search/?api=1&amp;query=333+Bridgeport+Ave+Shelton+CT+06484" target="_blank" rel="noopener">333 Bridgeport Ave<br>Shelton, CT 06484</a>
+            <div class="dealer-meta">
+              <a href="tel:+12039291484">(203) 929-1484</a>
+              <a class="dealer-site" href="https://www.curtissryan.com/" target="_blank" rel="noopener">website &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dealer-brand">
+        <div class="dealer-brand-head">
+          <div class="dealer-brand-name">Toyota</div>
+          <div class="dealer-brand-cars">RAV4 Hybrid · Corolla Cross Hybrid</div>
+        </div>
+        <div class="dealer-list">
+          <div class="dealer-card">
+            <div class="dealer-distance">7.8 mi</div>
+            <h3 class="dealer-name">New Country Toyota of Westport</h3>
+            <a class="dealer-addr" href="https://www.google.com/maps/search/?api=1&amp;query=777+Post+Rd+E+Westport+CT+06880" target="_blank" rel="noopener">777 Post Rd E<br>Westport, CT 06880</a>
+            <div class="dealer-meta">
+              <a href="tel:+12032223300">(203) 222-3300</a>
+              <a class="dealer-site" href="https://www.newcountrywestporttoyota.com/" target="_blank" rel="noopener">website &rarr;</a>
+            </div>
+          </div>
+          <div class="dealer-card">
+            <div class="dealer-distance">9.6 mi</div>
+            <h3 class="dealer-name">Colonial Toyota</h3>
+            <a class="dealer-addr" href="https://www.google.com/maps/search/?api=1&amp;query=470+Boston+Post+Rd+Milford+CT+06460" target="_blank" rel="noopener">470 Boston Post Rd<br>Milford, CT 06460</a>
+            <div class="dealer-meta">
+              <a href="tel:+12034036890">(203) 403-6890</a>
+              <a class="dealer-site" href="https://www.colonialtoyotact.com/" target="_blank" rel="noopener">website &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dealer-brand">
+        <div class="dealer-brand-head">
+          <div class="dealer-brand-name">Subaru</div>
+          <div class="dealer-brand-cars">Forester Hybrid</div>
+        </div>
+        <div class="dealer-list">
+          <div class="dealer-card">
+            <div class="dealer-distance">10.5 mi</div>
+            <h3 class="dealer-name">Dan Perkins Subaru</h3>
+            <a class="dealer-addr" href="https://www.google.com/maps/search/?api=1&amp;query=143+Boston+Post+Rd+Milford+CT+06460" target="_blank" rel="noopener">143 Boston Post Rd<br>Milford, CT 06460</a>
+            <div class="dealer-meta">
+              <a href="tel:+12038825686">(203) 882-5686</a>
+              <a class="dealer-site" href="https://www.danperkinssubaru.com/" target="_blank" rel="noopener">website &rarr;</a>
+            </div>
+          </div>
+          <div class="dealer-card">
+            <div class="dealer-distance">14.8 mi</div>
+            <h3 class="dealer-name">Garavel Subaru</h3>
+            <a class="dealer-addr" href="https://www.google.com/maps/search/?api=1&amp;query=520+Main+Ave+Norwalk+CT+06851" target="_blank" rel="noopener">520 Main Ave<br>Norwalk, CT 06851</a>
+            <div class="dealer-meta">
+              <a href="tel:+12036420620">(203) 642-0620</a>
+              <a class="dealer-site" href="https://garavelsubaru.com/" target="_blank" rel="noopener">website &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="testdrive-foot">Distances approximate from Black Rock, Bridgeport &mdash; tap an address for directions.</p>
+  </div>
+</section>
+
 <footer>
   <div class="sig">Whichever you pick.</div>
-  <div>You're going to be driving it for a long, happy time.</div>
+  <div>You're choosing from four genuinely good cars. There isn't a wrong answer here &mdash; only the one that fits your life best.</div>
   <div style="margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.04em">Built with care · April 2026</div>
 </footer>
 
@@ -1681,10 +1895,10 @@ loadSaved();
 
 /* ---------- LIGHTBOX CAROUSEL ---------- */
 const galleries = {
-  forester: { name: 'Subaru Forester Hybrid', photos: ['img/forester.png','img/forester.jpg','img/forester-2.jpg','img/forester-3.jpg'] },
-  crv:      { name: 'Honda CR-V Hybrid',      photos: ['img/crv.png','img/crv.jpg','img/crv-2.jpg','img/crv-3.jpg'] },
-  rav4:     { name: 'Toyota RAV4 Hybrid',     photos: ['img/rav4.png','img/rav4.jpg','img/rav4-2.jpg','img/rav4-3.jpg'] },
-  cross:    { name: 'Toyota Corolla Cross Hybrid', photos: ['img/cross.png','img/cross.jpg','img/cross-2.jpg','img/cross-3.jpg'] }
+  forester: { name: 'Subaru Forester Hybrid', photos: ['img/forester-1.jpg','img/forester-2.jpg','img/forester-3.jpg','img/forester-4.jpg'] },
+  crv:      { name: 'Honda CR-V Hybrid',      photos: ['img/crv-1.jpg','img/crv-2.jpg','img/crv-3.jpg','img/crv-4.jpg'] },
+  rav4:     { name: 'Toyota RAV4 Hybrid',     photos: ['img/rav4-1.jpg','img/rav4-2.jpg','img/rav4-3.jpg','img/rav4-4.jpg'] },
+  cross:    { name: 'Toyota Corolla Cross Hybrid', photos: ['img/cross-1.jpg','img/cross-2.jpg','img/cross-3.jpg','img/cross-4.jpg'] }
 };
 
 const lb = document.getElementById('lightbox');
