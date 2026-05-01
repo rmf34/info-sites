@@ -1020,6 +1020,14 @@ input[type=range]::-moz-range-thumb{
   letter-spacing:-.005em;
   font-variation-settings:"opsz" 36;
 }
+.dealer-name a{
+  color:inherit;
+  text-decoration:none;
+  border-bottom:1px solid transparent;
+  transition:border-color .15s ease, color .15s ease;
+}
+.dealer-name a:hover,.dealer-name a:focus-visible{ color:var(--amber); border-bottom-color:var(--amber) }
+.dealer-name a:focus-visible{ outline:2px solid var(--amber); outline-offset:3px; border-radius:2px }
 .dealer-addr{
   display:block;
   font-size:13px;
@@ -1326,7 +1334,7 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
     <div class="section-head">
       <div class="section-eyebrow">Go drive one</div>
       <h2>Test drive</h2>
-      <p class="section-lede">Spec sheets only get you so far. The two closest dealers per brand to Black Rock &mdash; call ahead to confirm a hybrid is actually on the lot, since hybrids tend to sell faster than they arrive.</p>
+      <p class="section-lede">Spec sheets only get you so far. The two closest dealers per brand to Black Rock Yacht Club &mdash; call ahead to confirm a hybrid is actually on the lot, since hybrids tend to sell faster than they arrive.</p>
     </div>
 
     <div class="dealer-grid">
@@ -1337,8 +1345,8 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
         </div>
         <div class="dealer-list">
           <div class="dealer-card">
-            <div class="dealer-distance">2.5 mi</div>
-            <h3 class="dealer-name">Honda of Westport</h3>
+            <div class="dealer-distance">3.6 mi</div>
+            <h3 class="dealer-name"><a href="https://www.hondaofwestport.com/" target="_blank" rel="noopener">Honda of Westport</a></h3>
             <a class="dealer-addr" href="https://www.google.com/maps/search/?api=1&amp;query=186+Linwood+Ave+Fairfield+CT+06824" target="_blank" rel="noopener">186 Linwood Ave<br>Fairfield, CT 06824</a>
             <div class="dealer-meta">
               <a href="tel:+12037631233">(203) 763-1233</a>
@@ -1346,8 +1354,8 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
             </div>
           </div>
           <div class="dealer-card">
-            <div class="dealer-distance">9.5 mi</div>
-            <h3 class="dealer-name">Curtiss Ryan Honda</h3>
+            <div class="dealer-distance">14.4 mi</div>
+            <h3 class="dealer-name"><a href="https://www.curtissryan.com/" target="_blank" rel="noopener">Curtiss Ryan Honda</a></h3>
             <a class="dealer-addr" href="https://www.google.com/maps/search/?api=1&amp;query=333+Bridgeport+Ave+Shelton+CT+06484" target="_blank" rel="noopener">333 Bridgeport Ave<br>Shelton, CT 06484</a>
             <div class="dealer-meta">
               <a href="tel:+12039291484">(203) 929-1484</a>
@@ -1364,8 +1372,8 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
         </div>
         <div class="dealer-list">
           <div class="dealer-card">
-            <div class="dealer-distance">7.8 mi</div>
-            <h3 class="dealer-name">New Country Toyota of Westport</h3>
+            <div class="dealer-distance">7.1 mi</div>
+            <h3 class="dealer-name"><a href="https://www.newcountrywestporttoyota.com/" target="_blank" rel="noopener">New Country Toyota of Westport</a></h3>
             <a class="dealer-addr" href="https://www.google.com/maps/search/?api=1&amp;query=777+Post+Rd+E+Westport+CT+06880" target="_blank" rel="noopener">777 Post Rd E<br>Westport, CT 06880</a>
             <div class="dealer-meta">
               <a href="tel:+12032223300">(203) 222-3300</a>
@@ -1373,8 +1381,8 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
             </div>
           </div>
           <div class="dealer-card">
-            <div class="dealer-distance">9.6 mi</div>
-            <h3 class="dealer-name">Colonial Toyota</h3>
+            <div class="dealer-distance">11.5 mi</div>
+            <h3 class="dealer-name"><a href="https://www.colonialtoyotact.com/" target="_blank" rel="noopener">Colonial Toyota</a></h3>
             <a class="dealer-addr" href="https://www.google.com/maps/search/?api=1&amp;query=470+Boston+Post+Rd+Milford+CT+06460" target="_blank" rel="noopener">470 Boston Post Rd<br>Milford, CT 06460</a>
             <div class="dealer-meta">
               <a href="tel:+12034036890">(203) 403-6890</a>
@@ -1391,8 +1399,8 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
         </div>
         <div class="dealer-list">
           <div class="dealer-card">
-            <div class="dealer-distance">10.5 mi</div>
-            <h3 class="dealer-name">Dan Perkins Subaru</h3>
+            <div class="dealer-distance">10.9 mi</div>
+            <h3 class="dealer-name"><a href="https://www.danperkinssubaru.com/" target="_blank" rel="noopener">Dan Perkins Subaru</a></h3>
             <a class="dealer-addr" href="https://www.google.com/maps/search/?api=1&amp;query=143+Boston+Post+Rd+Milford+CT+06460" target="_blank" rel="noopener">143 Boston Post Rd<br>Milford, CT 06460</a>
             <div class="dealer-meta">
               <a href="tel:+12038825686">(203) 882-5686</a>
@@ -1400,8 +1408,8 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
             </div>
           </div>
           <div class="dealer-card">
-            <div class="dealer-distance">14.8 mi</div>
-            <h3 class="dealer-name">Garavel Subaru</h3>
+            <div class="dealer-distance">15.6 mi</div>
+            <h3 class="dealer-name"><a href="https://garavelsubaru.com/" target="_blank" rel="noopener">Garavel Subaru</a></h3>
             <a class="dealer-addr" href="https://www.google.com/maps/search/?api=1&amp;query=520+Main+Ave+Norwalk+CT+06851" target="_blank" rel="noopener">520 Main Ave<br>Norwalk, CT 06851</a>
             <div class="dealer-meta">
               <a href="tel:+12036420620">(203) 642-0620</a>
@@ -1412,7 +1420,6 @@ input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4p
       </div>
     </div>
 
-    <p class="testdrive-foot">Distances approximate from Black Rock, Bridgeport &mdash; tap an address for directions.</p>
   </div>
 </section>
 
