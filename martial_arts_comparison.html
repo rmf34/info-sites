@@ -736,15 +736,9 @@
   th.col-overlay { background: var(--accent-2-bg); color: var(--accent-2-text); }
 
   td.heat .conf-mark {
-    position: absolute;
-    top: 3px;
-    right: 4px;
-    font-size: 8px;
-    color: rgba(0,0,0,0.45);
-    font-weight: 700;
-    letter-spacing: 0;
+    display: none;
   }
-  td.heat[data-textcolor="light"] .conf-mark { color: rgba(255,255,255,0.7); }
+  .legend-conf { display: none !important; }
   td.heat .fn-marker {
     position: absolute;
     bottom: 1px;
