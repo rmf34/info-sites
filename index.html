@@ -8,27 +8,38 @@
   :root {
     --bg: #fcfbf7;
     --surface: #ffffff;
+    --surface-2: #f4f2eb;
     --border: rgba(0,0,0,0.12);
     --border-strong: rgba(0,0,0,0.22);
+    --rule: rgba(0,0,0,0.85);
     --text: #1a1a1a;
     --text-2: #444;
     --text-3: #777;
+    --text-4: #999;
     --accent: #185FA5;
+    --accent-bg: #E6F1FB;
     --accent-text: #0C447C;
+    --accent-2: #D85A30;
     --font-serif: "Charter", "Iowan Old Style", "Georgia", "Times New Roman", serif;
     --font-sans: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    --font-mono: "SF Mono", "Menlo", "Consolas", monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #1a1a1a;
       --surface: #232323;
+      --surface-2: #2c2c2a;
       --border: rgba(255,255,255,0.12);
       --border-strong: rgba(255,255,255,0.22);
+      --rule: rgba(255,255,255,0.85);
       --text: #f0f0f0;
       --text-2: #c0c0c0;
       --text-3: #999;
+      --text-4: #777;
       --accent: #85B7EB;
+      --accent-bg: #042C53;
       --accent-text: #B5D4F4;
+      --accent-2: #F0997B;
     }
   }
   * { box-sizing: border-box; }
@@ -41,105 +52,204 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
-  main {
-    max-width: 720px;
+  .page {
+    max-width: 880px;
     margin: 0 auto;
-    padding: 64px 24px 96px;
+    padding: 56px 32px 96px;
   }
-  header {
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 24px;
-    margin-bottom: 40px;
+  .kicker {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
   }
   h1 {
-    font-size: 38px;
-    line-height: 1.15;
-    margin: 0 0 12px;
-    letter-spacing: -0.01em;
+    font-family: var(--font-serif);
+    font-size: 48px;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin: 0 0 16px;
   }
-  .lede {
+  .deck {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-style: italic;
     color: var(--text-2);
-    font-size: 18px;
-    margin: 0;
+    line-height: 1.5;
+    margin: 0 0 24px;
+    max-width: 640px;
   }
-  ul.cards {
+  .byline {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--text-3);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+    margin-bottom: 56px;
+  }
+  h2 {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    line-height: 1.2;
+  }
+  .section-deck {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    color: var(--text-2);
+    font-style: italic;
+    margin: 0 0 32px;
+  }
+
+  /* ---------- ENTRY LIST ---------- */
+  .entries {
     list-style: none;
     padding: 0;
     margin: 0;
+    border-top: 2px solid var(--rule);
+  }
+  .entry {
+    border-bottom: 1px solid var(--border);
+  }
+  .entry a {
     display: grid;
-    gap: 16px;
-  }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    transition: border-color 120ms ease;
-  }
-  .card a {
-    display: block;
-    padding: 22px 24px;
+    grid-template-columns: 80px 1fr auto;
+    gap: 24px;
+    align-items: baseline;
+    padding: 28px 0;
     color: inherit;
     text-decoration: none;
+    transition: background .15s ease;
   }
-  .card:hover {
-    border-color: var(--border-strong);
+  .entry a:hover,
+  .entry a:focus-visible {
+    background: var(--surface-2);
   }
-  .card h2 {
-    font-size: 22px;
-    margin: 0 0 6px;
-    color: var(--accent-text);
-    letter-spacing: -0.005em;
+  .entry a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
   }
-  .card p {
-    margin: 0;
-    color: var(--text-2);
-    font-size: 16px;
-  }
-  .meta {
-    margin-top: 10px;
-    font-family: var(--font-sans);
+  .entry-num {
+    font-family: var(--font-mono);
     font-size: 12px;
-    text-transform: uppercase;
+    color: var(--text-4);
     letter-spacing: 0.08em;
-    color: var(--text-3);
+    padding-left: 4px;
   }
+  .entry-body {
+    min-width: 0;
+  }
+  .entry-kicker {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .entry-title {
+    font-family: var(--font-serif);
+    font-size: 26px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+  }
+  .entry-summary {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    color: var(--text-2);
+    line-height: 1.55;
+    margin: 0;
+    font-style: italic;
+  }
+  .entry-arrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    align-self: center;
+    padding-right: 4px;
+    transition: color .15s ease, transform .15s ease;
+    white-space: nowrap;
+  }
+  .entry a:hover .entry-arrow,
+  .entry a:focus-visible .entry-arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+  @media (max-width: 640px) {
+    .page { padding: 40px 20px 64px; }
+    h1 { font-size: 36px; }
+    .entry a { grid-template-columns: 1fr; gap: 8px; padding: 24px 0; }
+    .entry-num { padding-left: 0; }
+    .entry-arrow { display: none; }
+  }
+
   footer {
-    margin-top: 56px;
+    margin-top: 72px;
     padding-top: 20px;
     border-top: 1px solid var(--border);
     color: var(--text-3);
     font-family: var(--font-sans);
-    font-size: 13px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
   }
 </style>
 </head>
 <body>
-<main>
+<div class="page">
   <header>
-    <h1>Info sites</h1>
-    <p class="lede">A small collection of decision helpers and reference pages.</p>
+    <div class="kicker">A small library · For friends &amp; family</div>
+    <h1>Info sites.</h1>
+    <p class="deck">Decision helpers and reference pieces, written carefully and laid out cleanly. Each one tries to make a hard choice a little easier.</p>
+    <div class="byline">Maintained by Matt · Updated occasionally · Built with care</div>
   </header>
 
-  <ul class="cards">
-    <li class="card">
-      <a href="martial_arts_comparison.html">
-        <h2>The honest map of the world's common martial arts</h2>
-        <p>A calibrated heatmap comparing styles across what they actually train, what they're good for, and what they aren't.</p>
-        <div class="meta">Reference &middot; Heatmap</div>
-      </a>
-    </li>
-    <li class="card">
-      <a href="which-hybrid.html">
-        <h2>Which hybrid is right for you?</h2>
-        <p>A little decision helper that scores today's hybrid lineup against what you actually care about.</p>
-        <div class="meta">Decision helper</div>
-      </a>
-    </li>
-  </ul>
+  <section>
+    <h2>What's here</h2>
+    <p class="section-deck">Two pieces, so far. More when something useful turns up.</p>
+
+    <ol class="entries">
+      <li class="entry">
+        <a href="which-hybrid.html">
+          <div class="entry-num">N&deg; 01</div>
+          <div class="entry-body">
+            <div class="entry-kicker">Decision helper · Cars</div>
+            <h3 class="entry-title">Which hybrid is right for you?</h3>
+            <p class="entry-summary">Four hybrid SUVs, scored against what you actually care about. Move the sliders; watch the tool argue with itself.</p>
+          </div>
+          <div class="entry-arrow">Read &rarr;</div>
+        </a>
+      </li>
+      <li class="entry">
+        <a href="martial_arts_comparison.html">
+          <div class="entry-num">N&deg; 02</div>
+          <div class="entry-body">
+            <div class="entry-kicker">Reference &middot; Heatmap</div>
+            <h3 class="entry-title">The honest map of the world's common martial arts.</h3>
+            <p class="entry-summary">Eleven arts on sixteen dimensions, with a published rubric for each. Vibes separated from data, deliberately.</p>
+          </div>
+          <div class="entry-arrow">Read &rarr;</div>
+        </a>
+      </li>
+    </ol>
+  </section>
 
   <footer>
-    Static pages. No tracking, no scripts beyond what each page needs.
+    Static pages. No tracking. No scripts beyond what each piece needs.
   </footer>
-</main>
+</div>
 </body>
 </html>
